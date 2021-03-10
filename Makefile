@@ -35,6 +35,9 @@ mxv_omp_mpi:	mxv_omp_mpi.c mat.c
 test_mmult:	test_mmult.c mmult.c mat.c
 	gcc test_mmult.c mmult.c mat.c -lm -o test_mmult
 
+mmult_simd.o:   mmult_simd.c
+	gcc -c -O3 mmult_simd.c
+
 clean:
 	rm -f *.o
 	rm -f ${PGMS}
