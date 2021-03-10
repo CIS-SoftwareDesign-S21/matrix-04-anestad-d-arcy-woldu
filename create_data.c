@@ -33,15 +33,8 @@ int main(int argc){
       mmult_simd(c2, a, n[i], n[i], b, n[i], n[i]);
       clock_gettime(CLOCK_REALTIME, &end);
       times[1] = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
-      fprintf(cfPtr, "%f, ", times[1]);
+      fprintf(cfPtr, "%f\n", times[1]);
 
-      clock_gettime(CLOCK_REALTIME, &start);
-      mmult_simd_o3(c2, a, n[i], n[i], b, n[i], n[i]);
-      clock_gettime(CLOCK_REALTIME, &end);
-      clock_gettime(CLOCK_REALTIME, &end);
-      times[2] = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
-      fprintf(cfPtr, "%f\n", times[2]);
-      compare_matrices(c1, c2, n[i], n[i]);
     }
   }
 }
