@@ -22,6 +22,7 @@ int main(int argc){
       b = gen_matrix(n[i], n[i]);
       c1 = malloc(sizeof(double) * n[i] * n[i]);
       c2 = malloc(sizeof(double) * n[i] * n[i]);
+      c3 = malloc(sizeof(double) * n[i] * n[i]);
 
       clock_gettime(CLOCK_REALTIME, &start);
       mmult(c1, a, n[i], n[i], b, n[i], n[i]);
@@ -34,6 +35,12 @@ int main(int argc){
       clock_gettime(CLOCK_REALTIME, &end);
       times[1] = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
       fprintf(cfPtr, "%f\n", times[1]);
+
+      clock_gettime(CLOCK_REALTIME, &start);
+      mmult_omp(c3, a, n[i], n[i], b, n[i], n[i]);
+      clock_gettime(CLOCK_REALTIME, &end);
+      times[2] = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
+      fprintf(cfPtr, "%f\n", times[2]);
 
     }
   }
