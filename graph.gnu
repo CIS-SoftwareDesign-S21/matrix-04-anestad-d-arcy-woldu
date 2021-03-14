@@ -6,4 +6,4 @@ set output 'out.png'
 set xlabel 'Matrix size'
 set ylabel 'Time (sec)'
 set title 'Matrix multiplication speed on Wlofgang Cluster'
-plot  "data.txt" using 1:2 title 'No SIMD' with linespoint, "data.txt" using 1:3 title 'SIMD (no O3)' with linespoint
+plot  "data.txt" using 1:2 title 'No SIMD' with linespoint, "data.txt" using 1:3 title 'SIMD (no O3)' with linespoint, "data.txt" using 1:4 title 'OMP' with linespoint
