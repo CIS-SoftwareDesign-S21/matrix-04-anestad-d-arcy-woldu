@@ -1,4 +1,4 @@
-PGMS=mmult_omp_timing matrix_times_vector hello test_mmult mxv_omp_mpi mmult_mpi_omp
+PGMS=create_data mmult_omp_timing matrix_times_vector hello test_mmult mxv_omp_mpi mmult_mpi_omp
 
 all:	${PGMS}
 
@@ -18,13 +18,13 @@ mmult.o:	mmult.c
 	gcc -c mmult.c
 
 mmult_omp.o:	mmult_omp.c
-	gcc -c -O3 -fopenmp mmult_omp.c
+	gcc -c -fopenmp mmult_omp.c
 
 mmult_omp_timing.o:	mmult_omp_timing.c
 	gcc -c -O3 mmult_omp_timing.c
 
 create_data:	mmult.o mmult_simd.o mmult_omp.o create_data.o mat.c
-	gcc -o mmult -fopenmp -O3 mmult.o mmult_simd.o mmult_omp.o create_data.o mat.c -o create_data
+	gcc -o mmult mmult.o -fopenmp mmult_simd.o mmult_omp.o create_data.o mat.c -o create_data
 
 matrix_times_vector:	matrix_times_vector.c mat.c
 	mpicc -O3 -o matrix_times_vector matrix_times_vector.c mat.c

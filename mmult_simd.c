@@ -29,7 +29,6 @@ int mmult_simd(double *c,
     for(int k = 0; k < aRows; k++)
       for(int l = 0; l < bRows; l++)
         c[i * bCols + l] += a[i * aRows + k] * b[k * bCols + l];
-    	
   }
   return 0;
 }
