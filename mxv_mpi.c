@@ -1,7 +1,10 @@
 /** 
+ * 
  * Program to multiply a matrix times a vector using both
  * MPI to distribute the computation among nodes and OMP
- * to distribute the computation among threads.
+ * 
+ * Compile: mpigcc -g -Wall mxvc_mpi mxvc_mpi.c
+ * Run: mpirun -n <num_procs> ./mxvc_mpi <nrows>
 */
 
 #include "mpi.h"
@@ -31,8 +34,6 @@ int main(int argc, char* argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
-    printf("There are %d arguments\n");
-    printf("The first arg is %d and the second arg is %d\n", argv[0], argv[1]);
     if (argc > 1) {
         nrows = atoi(argv[1]);
         ncols = nrows;
