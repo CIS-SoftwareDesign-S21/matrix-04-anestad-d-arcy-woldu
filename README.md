@@ -9,4 +9,4 @@ SIMD: Single Instruction Multiple Data is an architecture where an instruction p
 
 OMP: Parallel programs are executed on a local shared memory system. Threads have access to shared data. 
 
-MPI: Message Passing Interface is mainly useful used in a distributed system. Tasks are divided and sent between different nodes on the cluster. Memory is private between these nodes. Simple programs can take a longer time to execute due to overhead such as networking.
+MPI: Message Passing Interface is mainly used in a distributed system. Tasks are divided and sent between different nodes in the cluster. Memory is private between these nodes. MPI is great for solving computationally expensive problems, however, simple programs can take a longer time to execute due to overhead such as networking.
