@@ -33,32 +33,6 @@ int main(int argc){
       fprintf(cfPtr, ", 0.000000"); //TODO MPI w/ OpenMP
 
       fprintf(cfPtr, "\n");
-
-
-//      clock_gettime(CLOCK_REALTIME, &start);
-//      mmult(c1, a, n[i], n[i], b, n[i], n[i]);
-//      clock_gettime(CLOCK_REALTIME, &end);
-//      times[0] = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
-//      fprintf(cfPtr, "%d, %f, ", n[i], times[0]);
-//
-//      clock_gettime(CLOCK_REALTIME, &start);
-//      mmult_simd(c2, a, n[i], n[i], b, n[i], n[i]);
-//      clock_gettime(CLOCK_REALTIME, &end);
-//      times[1] = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
-//      fprintf(cfPtr, "%f, ", times[1]);
-//
-//      clock_gettime(CLOCK_REALTIME, &start);
-//      mmult_simd_O3(c2, a, n[i], n[i], b, n[i], n[i]);
-//      clock_gettime(CLOCK_REALTIME, &end);
-//      times[2] = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
-//      fprintf(cfPtr, "%f ", times[2]);
-//
-//      clock_gettime(CLOCK_REALTIME, &start);
-//      mmult_omp(c3, a, n[i], n[i], b, n[i], n[i]);
-//      clock_gettime(CLOCK_REALTIME, &end);
-//      times[3] = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
-//      fprintf(cfPtr, "%f\n", times[3]);
-
     }
   }
 }
