@@ -42,7 +42,7 @@ mmult_simd.o:   mmult_simd.c
 	gcc -c mmult_simd.c
 
 mmult_simd_O3.o: mmult_simd_O3.c
-	gcc -c mmult_simd_O3.c
+	gcc -c -O3 mmult_simd_O3.c
 
 clean:
 	rm -f *.o

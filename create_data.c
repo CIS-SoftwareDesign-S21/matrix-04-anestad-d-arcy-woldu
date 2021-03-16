@@ -5,6 +5,8 @@
 
 #include "mat.h"
 
+double calcTime(int (*fun_ptr)(double *c, double *a, int aRows, int aCols, double *b, int bRows, int bCols), double *a, double *b, int n);
+
 int main(int argc){
   struct timespec start;
   struct timespec end;
@@ -21,12 +23,12 @@ int main(int argc){
       a = gen_matrix(n[i], n[i]);
       b = gen_matrix(n[i], n[i]);
 
-      fprintf(cfPtr, "%d", n);
+      fprintf(cfPtr, "%d", n[i]);
 
-      fprintf(cfPtr, ", %f", calcTime(mmult,         a, b, n));
-      fprintf(cfPtr, ", %f", calcTime(mmult_simd,    a, b, n));
-      fprintf(cfPtr, ", %f", calcTime(mmult_simd_O3, a, b, n));
-      fprintf(cfPtr, ", %f", calcTime(mmult_omp,     a, b, n));
+      fprintf(cfPtr, ", %f", calcTime(mmult,         a, b, n[i]));
+      fprintf(cfPtr, ", %f", calcTime(mmult_simd,    a, b, n[i]));
+      fprintf(cfPtr, ", %f", calcTime(mmult_simd_O3, a, b, n[i]));
+      fprintf(cfPtr, ", %f", calcTime(mmult_omp,     a, b, n[i]));
       fprintf(cfPtr, ", %f", 0.0 ); //TODO MPI w/o OpenMP
       fprintf(cfPtr, ", %f", 0.0 ); //TODO MPI w/ OpenMP
 
