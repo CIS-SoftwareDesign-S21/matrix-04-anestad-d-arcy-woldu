@@ -21,7 +21,10 @@ mmult_omp.o:	mmult_omp.c
 	gcc -c -fopenmp mmult_omp.c
 
 mmult_omp_timing.o:	mmult_omp_timing.c
-	gcc -c -O3 mmult_omp_timing.c
+	gcc -c  mmult_omp_timing.c
+
+create_data.o: create_data.c
+	gcc -c create_data.c
 
 create_data:	mmult.o mmult_simd.o mmult_simd_O3.o mmult_omp.o create_data.o mat.c
 	gcc -o mmult mmult.o -fopenmp mmult_simd.o mmult_simd_O3.o mmult_omp.o create_data.o mat.c -o create_data

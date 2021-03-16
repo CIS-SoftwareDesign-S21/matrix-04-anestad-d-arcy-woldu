@@ -29,8 +29,8 @@ int main(int argc){
       fprintf(cfPtr, ", %f", calcTime(mmult_simd,    a, b, n[i]));
       fprintf(cfPtr, ", %f", calcTime(mmult_simd_O3, a, b, n[i]));
       fprintf(cfPtr, ", %f", calcTime(mmult_omp,     a, b, n[i]));
-      fprintf(cfPtr, ", %f", 0.0 ); //TODO MPI w/o OpenMP
-      fprintf(cfPtr, ", %f", 0.0 ); //TODO MPI w/ OpenMP
+      fprintf(cfPtr, ", 0.000000"); //TODO MPI w/o OpenMP
+      fprintf(cfPtr, ", 0.000000"); //TODO MPI w/ OpenMP
 
       fprintf(cfPtr, "\n");
 
@@ -50,7 +50,7 @@ int main(int argc){
 //      clock_gettime(CLOCK_REALTIME, &start);
 //      mmult_simd_O3(c2, a, n[i], n[i], b, n[i], n[i]);
 //      clock_gettime(CLOCK_REALTIME, &end);
-//      times[3] = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
+//      times[2] = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
 //      fprintf(cfPtr, "%f ", times[2]);
 //
 //      clock_gettime(CLOCK_REALTIME, &start);
