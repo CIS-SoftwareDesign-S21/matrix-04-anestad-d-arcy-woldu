@@ -28,7 +28,9 @@ int mmult(double *c,
         for(int j = 0; j < bCols; ++j) {
             c[i * bCols + j] = 0;
             for(int k = 0; k < aRows; ++k) {
-                c[i * bCols + j] += a[i * aRows + k] * b[k * bCols + j];
+		for (int l = 0; l < aRows; ++l) {
+                	c[i * bCols + j] += a[i * aRows + k] * b[k * bCols + j];
+		}
             }
         }
     }
