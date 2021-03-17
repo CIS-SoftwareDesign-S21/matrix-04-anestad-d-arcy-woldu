@@ -4,6 +4,7 @@
 double *gen_matrix(int n, int m);
 int compare_matrices(double* a, double* b, int nRows, int nCols);
 double *read_matrix_from_file(const char *path);
+int get_matrix_size_from_file(const char *c);
 void print_matrix(double *a, int nrows, int ncols);
 
 int mmult(double *c, 

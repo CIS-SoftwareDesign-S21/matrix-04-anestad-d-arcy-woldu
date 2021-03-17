@@ -101,6 +101,19 @@ double *read_matrix_from_file(const char *path) {
     return matrix;
 }
 
+int get_matrix_size_from_file(const char *c) {
+    FILE *ptr = fopen(c, "r");
+    size_t buflen = 255;
+    char buf[buflen];
+    int n, m;
+    if(!fgets(buf, buflen, ptr)) {
+        fprintf(stderr, "Unable to read file at path '%s'\n", c);
+    } else if(sscanf(buf, "%d %d", &n, &m) != 2) {
+        fprintf(stderr, "Unable to parse first line, expect '%%d %%d'.\n");
+    }
+    return n;
+}
+
 /**
  * Prints the matrix for pretty viewing.
  * 
