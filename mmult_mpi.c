@@ -25,7 +25,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
 
         while(1) {
 
-            MPI_Recv(buffer, bCols, datatype, source, tag,  comm, &status);
+            MPI_Recv(buffer, bCols, datatype, source, tag, comm, &status);
             if (status.MPI_TAG == 0) {
                 break;
             }
@@ -64,6 +64,8 @@ int mmult_mpi(int argc, char **argv) {
 
         nrows = atoi(argv[1]);
         ncols = nrows;
+        bCols = ncols;
+        bRows = nrows;
         // aa = (double*)malloc(sizeof(double) * nrows * ncols);
         b = (double*)malloc(sizeof(double) * ncols);
         c = (double*)malloc(sizeof(double) * nrows);
