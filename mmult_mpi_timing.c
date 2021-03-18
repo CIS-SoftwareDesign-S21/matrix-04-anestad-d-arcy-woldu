@@ -15,6 +15,31 @@
 #include "mat.h"
 #define min(x, y) ((x)<(y)?(x):(y))
 
+void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int source, int tag,
+             MPI_Comm comm, MPI_Status status, int process_id, int bRows, double *b, int row, 
+             int ans) 
+{
+
+    // each slave process id corresponds to the ith row it will be responsible for
+    if (process_id <= bRows) {
+
+        while(1) {
+
+            MPI_Recv(buffer, bCols, datatype, source, tag, comm, &status);
+            if (status.MPI_TAG == 0) {
+                break;
+            }
+            row = status.MPI_TAG;
+            ans = 0.0;
+            for (int j = 0; j < bCols; j++) {
+                ans += buffer[j] * b[j];
+            }
+            // send answer to master, along with the row #
+            MPI_Send(&ans, 1, datatype, source, row, comm);
+        }
+    }
+}
+
 int main(int argc, char* argv[])
 {
     int nrows, ncols;
@@ -77,21 +102,9 @@ int main(int argc, char* argv[])
         } else {
             // Slave Code goes here
             MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
-            if (myid <= nrows) {
-                while(1) {
-                    
-                    MPI_Recv(buffer, ncols, MPI_DOUBLE, master, MPI_ANY_TAG,  MPI_COMM_WORLD, &status);
-                    if (status.MPI_TAG == 0) {
-                        break;
-                    }
-                    row = status.MPI_TAG;
-                    ans = 0.0;
-                    for (j = 0; j < ncols; j++) {
-                        ans += buffer[j] * b[j];
-                    }
-                    MPI_Send(&ans, 1, MPI_DOUBLE, master, row, MPI_COMM_WORLD);
-                }
-            }
+            compute_inner_product(buffer, ncols, MPI_DOUBLE, master, 
+                                  MPI_ANY_TAG, MPI_COMM_WORLD, status,
+                                  myid, bRows, b, row, ans);
         }
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
