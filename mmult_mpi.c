@@ -14,10 +14,10 @@
 #include "mat.h"
 #define min(x, y) ((x)<(y)?(x):(y))
 
-
 void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int source, int tag,
              MPI_Comm comm, MPI_Status status, int process_id, int bRows, double *b, int row, 
-             int ans) {
+             int ans) 
+{
 
     // each slave process id corresponds to the ith row it will be responsible for
     if (process_id <= bRows) {
@@ -40,9 +40,11 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
 }
 
 int main(int argc, char **argv) {
-    double *aa, *b, *c;
+
+    int nrows, ncols;
     int aRows, aCols;
     int bRows, bCols;
+    double *aa, *b, *c;
     double *buffer, ans;
     double *times;
     double total_times;
@@ -52,10 +54,9 @@ int main(int argc, char **argv) {
     double starttime, endtime;
     MPI_Status status;
     int i, j, numsent, sender;
-    int nrows, ncols;
     int anstype, row;
-    MPI_Init(argc, &argv);
     srand(time(0));
+    MPI_Init(argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
@@ -96,10 +97,11 @@ int main(int argc, char **argv) {
                 sender = status.MPI_SOURCE;
                 anstype = status.MPI_TAG;
                 c[anstype-1] = ans;
+                
                 // if we haven't finished the job, keep sending more rows to the slave processes, until all rows are accounted for
                 if (numsent < bRows) {
                     for (j = 0; j < bCols; j++) {
-                        buffer[j] = aa[numsent*bCols + j];
+                        buffer[j] = aa[numsent * bCols + j];
                     }  
                     MPI_Send(buffer, bCols, MPI_DOUBLE, sender, numsent+1, MPI_COMM_WORLD);
                     numsent++;
@@ -112,12 +114,11 @@ int main(int argc, char **argv) {
             printf("%f\n",(endtime - starttime));
         } else {
             // Slave process receives matrix b sent from master and computes inner product
-            printf("Slave Process running!\n");
             MPI_Bcast(b, bCols, MPI_DOUBLE, master, MPI_COMM_WORLD);
             if (myid <= nrows) {
                 while(1) {
                     
-                    MPI_Recv(buffer, ncols, MPI_DOUBLE, master, MPI_ANY_TAG,  MPI_COMM_WORLD, &status);
+                    MPI_Recv(buffer, bCols, MPI_DOUBLE, master, MPI_ANY_TAG,  MPI_COMM_WORLD, &status);
                     if (status.MPI_TAG == 0) {
                         break;
                     }
@@ -138,6 +139,8 @@ int main(int argc, char **argv) {
     MPI_Finalize();
     return 0;
 }
+
+
 
 // int main(int argc, char *argv[]) {
 //     int to_return = mmult_mpi(argc, argv);
