@@ -2,6 +2,12 @@ PGMS=create_data mmult_omp_timing matrix_times_vector hello test_mmult mxv_omp_m
 
 all:	${PGMS}
 
+mmult_mpi: mmult_mpi.c mat.c
+	mpicc -g -Wall -O3 -o mmult_mpi mmult_mpi.c mat.c
+
+mmult_mpi_timing:	mmult_mpi_timing.c mat.c
+	mpicc -g -Wall -O3 -o mmult_mpi_timing mmult_mpi_timing.c mat.c
+
 mmult_mpi_omp:		mmult.o mmult_mpi_omp.o mat.c
 	mpicc -o mmult_mpi_omp -fopenmp -O3 mmult.o mmult_mpi_omp.o mat.c
 
@@ -37,12 +43,6 @@ hello:	hello.c
 
 mxv_omp_mpi:	mxv_omp_mpi.c mat.c
 	mpicc -fopenmp -O3 -o mxv_omp_mpi mxv_omp_mpi.c mat.c
-
-mpi_timing: mpi_timing.c mat.c
-	mpicc -g -Wall -O3 -o mmult_mpi mmult_mpi.c mat.c
-
-mmult_mpi_timing:	mmult_mpi_timing.c mat.c
-	mpicc -g -Wall -O3 -o mmult_mpi_timing mmult_mpi_timing.c mat.c
 
 test_mmult:	test_mmult.c mmult.c mat.c
 	gcc test_mmult.c mmult.c mat.c -lm -o test_mmult
