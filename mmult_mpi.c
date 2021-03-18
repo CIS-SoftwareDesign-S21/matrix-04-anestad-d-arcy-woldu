@@ -3,19 +3,45 @@
   * Program to multiply a matrix times a vector using both
   * MPI to distribute the computation among nodes and OMP
   * 
-  * Compile: mpigcc -g -Wall mmult_mpi_timing mmult_mpi_timing.c
-  * Run: mpiexec -f ~/hosts -n 12 ./mmult_mpi_timing 500
+  * Compile: mpigcc -g -Wall mmult_mpi mmult_mpi.c
+  * Run: mpiexec -f ~/hosts -n 12 ./mmult_mpi 500
  */
 
 #include "mpi.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
 #include "mat.h"
 #define min(x, y) ((x)<(y)?(x):(y))
 
-void mmult_mpi(double *c, double *a, int aRows, int aCols, double *b, int bRows, int bCols) {
+void compute_inner_product(void *buffer, int bCols, MPI_Datatype datatype, int source, int tag,
+             MPI_Comm comm, MPI_Status *status, int process_id, int bRows, double b, int row, 
+             int ans) {
+
+    // each slave process id corresponds to the ith row it will be responsible for
+    if (process_id <= bRows) {
+
+        while(1) {
+
+            MPI_Recv(buffer, bCols, datatype, source, tag,  comm, &status);
+            if (status.MPI_TAG == 0) {
+                break;
+            }
+            row = status.MPI_TAG;
+            ans = 0.0;
+            for (j = 0; j < bCols; j++) {
+                ans += buffer[j] * b[j];
+            }
+            // send answer to master, along with the row #
+            MPI_Send(&ans, 1, datatype, source, row, comm);
+        }
+    }
+}
+
+void mmult_mpi(int argc, char *argv) {
+    double *a, *b, *c;
+    int aRows, aCols;
+    int bRows, bCols;
     double *buffer, ans;
     double *times;
     double total_times;
@@ -26,22 +52,29 @@ void mmult_mpi(double *c, double *a, int aRows, int aCols, double *b, int bRows,
     MPI_Status status;
     int i, j, numsent, sender;
     int anstype, row;
-    int NUM_PROCESSES = 3
-    int argc = 2
-    char *argv['./mmult_mpi_timing', '500']
     MPI_Init(argc, &argv);
     srand(time(0));
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
-    if (argc > 1) {;
+    if (argc > 1) {
+
+        nrows = atoi(argv[1]);
+        ncols = nrows;
+        // aa = (double*)malloc(sizeof(double) * nrows * ncols);
+        b = (double*)malloc(sizeof(double) * ncols);
+        c = (double*)malloc(sizeof(double) * nrows);
+
+
         buffer = (double*)malloc(sizeof(double) * bCols);
         master = 0;
+        // Master Process starts here 
         if (myid == master) {
-        // Master Process controller 
 
+        // load matrix a and b here
         aa = gen_matrix(nrows, ncols);
-        //  starttime = MPI_Wtime();
+        
+        starttime = MPI_Wtime();
         numsent = 0;
         MPI_Bcast(b, bCols, MPI_DOUBLE, master, MPI_COMM_WORLD);
 
@@ -71,31 +104,15 @@ void mmult_mpi(double *c, double *a, int aRows, int aCols, double *b, int bRows,
                         MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
                 }
              } 
-            //  endtime = MPI_Wtime();
+             endtime = MPI_Wtime();
              printf("%f\n",(endtime - starttime));
          } else {
 
-             // Slave process receives matrix b sent from master
+             // Slave process receives matrix b sent from master and computes inner product
+             compute_inner_product(buffer, bCols, MPI_DOUBLE, master, MPI_ANY_TAG, comm, &status,
+                                   myid, bRows, b, row, ans)
+
              MPI_Bcast(b, bCols, MPI_DOUBLE, master, MPI_COMM_WORLD);
-
-            // each slave process id corresponds to the ith row it will be responsible for
-             if (myid <= bRows) {
-
-                while(1) {
-
-                    MPI_Recv(buffer, bCols, MPI_DOUBLE, master, MPI_ANY_TAG,  MPI_COMM_WORLD, &status);
-                    if (status.MPI_TAG == 0) {
-                        break;
-                    }
-                    row = status.MPI_TAG;
-                    ans = 0.0;
-                    for (j = 0; j < bCols; j++) {
-                        ans += buffer[j] * b[j];
-                    }
-                    // send answer to master, along with the row #
-                    MPI_Send(&ans, 1, MPI_DOUBLE, master, row, MPI_COMM_WORLD);
-            }
-            }
         }
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
