@@ -78,20 +78,19 @@ int main(int argc, char* argv[])
             // Slave Code goes here
             MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
             if (myid <= nrows) {
-		while(1) {
-		MPI_Recv(buffer, ncols, MPI_DOUBLE, master, MPI_ANY_TAG,  MPI_COMM_WORLD, &status);
-                if (status.MPI_TAG == 0) {
-			break;
-		}
-
-		row = status.MPI_TAG;
-	        ans = 0.0;
-
-	        for (j = 0; j < ncols; j++) {
-			ans += buffer[j] * b[j];
-	        }
-	        MPI_Send(&ans, 1, MPI_DOUBLE, master, row, MPI_COMM_WORLD);
-		}
+                while(1) {
+                    
+                    MPI_Recv(buffer, ncols, MPI_DOUBLE, master, MPI_ANY_TAG,  MPI_COMM_WORLD, &status);
+                    if (status.MPI_TAG == 0) {
+                        break;
+                    }
+                    row = status.MPI_TAG;
+                    ans = 0.0;
+                    for (j = 0; j < ncols; j++) {
+                        ans += buffer[j] * b[j];
+                    }
+                    MPI_Send(&ans, 1, MPI_DOUBLE, master, row, MPI_COMM_WORLD);
+                }
             }
         }
     } else {
