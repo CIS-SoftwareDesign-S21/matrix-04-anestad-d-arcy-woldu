@@ -14,7 +14,7 @@
 #include "mat.h"
 #define min(x, y) ((x)<(y)?(x):(y))
 
-void compute_inner_product(void *buffer, int bCols, MPI_Datatype datatype, int source, int tag,
+void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int source, int tag,
              MPI_Comm comm, MPI_Status status, int process_id, int bRows, double *b, int row, 
              int ans) {
 
@@ -72,22 +72,22 @@ void mmult_mpi(int argc, char *argv) {
         // Master Process starts here 
         if (myid == master) {
 
-        // load matrix a and b here
-        aa = gen_matrix(nrows, ncols);
+            // load matrix a and b here
+            aa = gen_matrix(nrows, ncols);
 
-        starttime = MPI_Wtime();
-        numsent = 0;
-        MPI_Bcast(b, bCols, MPI_DOUBLE, master, MPI_COMM_WORLD);
+            starttime = MPI_Wtime();
+            numsent = 0;
+            MPI_Bcast(b, bCols, MPI_DOUBLE, master, MPI_COMM_WORLD);
 
-        // iterate through matrix b and send its columns to each slave process
-        for (i = 0; i < min(numprocs-1, bRows); i++) {
-            for (j = 0; j < bCols; j++) {
-                    buffer[j] = aa[i * bCols + j];
-                }  
-            MPI_Send(buffer, bCols, MPI_DOUBLE, i+1, i+1, MPI_COMM_WORLD);
-            numsent++;
-        }
-            // Recieve the answers computed by the slave processes and append it to matrix c
+            // iterate through matrix b and send its columns to each slave process
+            for (i = 0; i < min(numprocs-1, bRows); i++) {
+                for (j = 0; j < bCols; j++) {
+                        buffer[j] = aa[i * bCols + j];
+                    }  
+                MPI_Send(buffer, bCols, MPI_DOUBLE, i+1, i+1, MPI_COMM_WORLD);
+                numsent++;
+            }
+                // Recieve the answers computed by the slave processes and append it to matrix c
             for (i = 0; i < bRows; i++) {
                 MPI_Recv(&ans, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
                 sender = status.MPI_SOURCE;
@@ -104,16 +104,15 @@ void mmult_mpi(int argc, char *argv) {
                         // we're finished, job done!
                         MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
                 }
-             } 
-             endtime = MPI_Wtime();
-             printf("%f\n",(endtime - starttime));
-         } else {
+            } 
+            endtime = MPI_Wtime();
+            printf("%f\n",(endtime - starttime));
+        } else {
+            // Slave process receives matrix b sent from master and computes inner product
+            compute_inner_product(buffer, bCols, MPI_DOUBLE, master, MPI_ANY_TAG, MPI_COMM_WORLD, &status,
+                                    myid, bRows, b, row, ans);
 
-             // Slave process receives matrix b sent from master and computes inner product
-             compute_inner_product(buffer, bCols, MPI_DOUBLE, master, MPI_ANY_TAG, comm, &status,
-                                   myid, bRows, b, row, ans);
-
-             MPI_Bcast(b, bCols, MPI_DOUBLE, master, MPI_COMM_WORLD);
+            MPI_Bcast(b, bCols, MPI_DOUBLE, master, MPI_COMM_WORLD);
         }
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
