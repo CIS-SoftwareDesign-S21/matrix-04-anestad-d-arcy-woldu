@@ -113,10 +113,9 @@ int mmult_mpi(int argc, char **argv) {
         } else {
             // Slave process receives matrix b sent from master and computes inner product
             printf("Slave Process running!\n");
+            MPI_Bcast(b, bCols, MPI_DOUBLE, master, MPI_COMM_WORLD);
             compute_inner_product(&buffer, bCols, MPI_DOUBLE, master, MPI_ANY_TAG, MPI_COMM_WORLD, status,
                                     myid, bRows, b, row, ans);
-
-            MPI_Bcast(b, bCols, MPI_DOUBLE, master, MPI_COMM_WORLD);
         }
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
