@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
             MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
             compute_inner_product(buffer, ncols, MPI_DOUBLE, master, 
                                   MPI_ANY_TAG, MPI_COMM_WORLD, status,
-                                  myid, bRows, b, row, ans);
+                                  myid, nrows, b, row, ans);
         }
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
