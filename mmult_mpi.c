@@ -120,3 +120,8 @@ void mmult_mpi(int argc, char *argv) {
     MPI_Finalize();
     return 0;
 }
+
+int main(int argc, char *argv[]) {
+    mmult_mpi(argc, argv);
+    return 0;
+}
