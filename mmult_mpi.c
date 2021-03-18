@@ -38,7 +38,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
     }
 }
 
-void mmult_mpi(int argc, char *argv[]) {
+void mmult_mpi(int argc, char **argv) {
     double *aa, *a, *b, *c;
     int aRows, aCols;
     int bRows, bCols;
@@ -71,7 +71,7 @@ void mmult_mpi(int argc, char *argv[]) {
         master = 0;
         // Master Process starts here 
         if (myid == master) {
-
+            printf("Master Process running!\n");
             // load matrix a and b here
             aa = gen_matrix(nrows, ncols);
 
@@ -109,6 +109,7 @@ void mmult_mpi(int argc, char *argv[]) {
             printf("%f\n",(endtime - starttime));
         } else {
             // Slave process receives matrix b sent from master and computes inner product
+            printf("Slave Process running!\n");
             compute_inner_product(buffer, bCols, MPI_DOUBLE, master, MPI_ANY_TAG, MPI_COMM_WORLD, status,
                                     myid, bRows, b, row, ans);
 
