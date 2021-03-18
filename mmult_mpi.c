@@ -15,7 +15,7 @@
 #define min(x, y) ((x)<(y)?(x):(y))
 
 void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int source, int tag,
-             MPI_Comm comm, MPI_Status *status, int process_id, int bRows, double *b, int row, 
+             MPI_Comm comm, MPI_Status status, int process_id, int bRows, double *b, int row, 
              int ans) {
 
     // each slave process id corresponds to the ith row it will be responsible for
