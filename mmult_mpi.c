@@ -7,13 +7,13 @@
   * Run: mpiexec -f ~/hosts -n 12 ./mmult_mpi_timing 500
  */
 
- #include "mpi.h"
- #include <stdio.h>
- #include <stdlib.h>
- #include <time.h>
+#include "mpi.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
- #include "mat.h"
- #define min(x, y) ((x)<(y)?(x):(y))
+#include "mat.h"
+#define min(x, y) ((x)<(y)?(x):(y))
 
 void mmult_mpi(double *c, double *a, int aRows, int aCols, double *b, int bRows, int bCols) {
     double *buffer, ans;
