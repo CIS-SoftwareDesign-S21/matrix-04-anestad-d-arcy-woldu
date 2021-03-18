@@ -89,7 +89,7 @@ void mmult_mpi(int argc, char *argv) {
             }
                 // Recieve the answers computed by the slave processes and append it to matrix c
             for (i = 0; i < bRows; i++) {
-                MPI_Recv(&ans, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+                MPI_Recv(&ans, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, status);
                 sender = status.MPI_SOURCE;
                 anstype = status.MPI_TAG;
                 c[anstype-1] = ans;
