@@ -14,7 +14,7 @@
 #include "mat.h"
 #define min(x, y) ((x)<(y)?(x):(y))
 
-double *buffer,
+double *buffer;
 
 void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int source, int tag,
              MPI_Comm comm, MPI_Status status, int process_id, int bRows, double *b, int row, 
