@@ -15,7 +15,7 @@
 #define min(x, y) ((x)<(y)?(x):(y))
 
 void compute_inner_product(void *buffer, int bCols, MPI_Datatype datatype, int source, int tag,
-             MPI_Comm comm, MPI_Status *status, int process_id, int bRows, double b, int row, 
+             MPI_Comm comm, MPI_Status status, int process_id, int bRows, double *b, int row, 
              int ans) {
 
     // each slave process id corresponds to the ith row it will be responsible for
@@ -29,7 +29,7 @@ void compute_inner_product(void *buffer, int bCols, MPI_Datatype datatype, int s
             }
             row = status.MPI_TAG;
             ans = 0.0;
-            for (j = 0; j < bCols; j++) {
+            for (int j = 0; j < bCols; j++) {
                 ans += buffer[j] * b[j];
             }
             // send answer to master, along with the row #
@@ -39,7 +39,7 @@ void compute_inner_product(void *buffer, int bCols, MPI_Datatype datatype, int s
 }
 
 void mmult_mpi(int argc, char *argv) {
-    double *a, *b, *c;
+    double *aa, *a, *b, *c;
     int aRows, aCols;
     int bRows, bCols;
     double *buffer, ans;
@@ -51,6 +51,7 @@ void mmult_mpi(int argc, char *argv) {
     double starttime, endtime;
     MPI_Status status;
     int i, j, numsent, sender;
+    int nrows, ncols;
     int anstype, row;
     MPI_Init(argc, &argv);
     srand(time(0));
@@ -73,7 +74,7 @@ void mmult_mpi(int argc, char *argv) {
 
         // load matrix a and b here
         aa = gen_matrix(nrows, ncols);
-        
+
         starttime = MPI_Wtime();
         numsent = 0;
         MPI_Bcast(b, bCols, MPI_DOUBLE, master, MPI_COMM_WORLD);
@@ -110,7 +111,7 @@ void mmult_mpi(int argc, char *argv) {
 
              // Slave process receives matrix b sent from master and computes inner product
              compute_inner_product(buffer, bCols, MPI_DOUBLE, master, MPI_ANY_TAG, comm, &status,
-                                   myid, bRows, b, row, ans)
+                                   myid, bRows, b, row, ans);
 
              MPI_Bcast(b, bCols, MPI_DOUBLE, master, MPI_COMM_WORLD);
         }
