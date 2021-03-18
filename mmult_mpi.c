@@ -38,7 +38,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
     }
 }
 
-void mmult_mpi(int argc, char *argv) {
+void mmult_mpi(int argc, char *argv[]) {
     double *aa, *a, *b, *c;
     int aRows, aCols;
     int bRows, bCols;
