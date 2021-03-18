@@ -40,7 +40,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
     }
 }
 
-int main(int argc, char* argv[])
+int mmult_mpi(int argc, char* argv[])
 {
     int nrows, ncols;
     double *aa, *b, *c;
@@ -110,5 +110,10 @@ int main(int argc, char* argv[])
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
     }
     MPI_Finalize();
+    return 0;
+}
+
+int main(int argc, char **argv) {
+    mmult_mpi(argc, argv);
     return 0;
 }
