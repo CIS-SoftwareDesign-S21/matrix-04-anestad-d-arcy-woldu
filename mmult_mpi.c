@@ -89,7 +89,7 @@ void mmult_mpi(int argc, char *argv) {
             }
                 // Recieve the answers computed by the slave processes and append it to matrix c
             for (i = 0; i < bRows; i++) {
-                MPI_Recv(&ans, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, status);
+                MPI_Recv(&ans, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
                 sender = status.MPI_SOURCE;
                 anstype = status.MPI_TAG;
                 c[anstype-1] = ans;
@@ -109,7 +109,7 @@ void mmult_mpi(int argc, char *argv) {
             printf("%f\n",(endtime - starttime));
         } else {
             // Slave process receives matrix b sent from master and computes inner product
-            compute_inner_product(buffer, bCols, MPI_DOUBLE, master, MPI_ANY_TAG, MPI_COMM_WORLD, &status,
+            compute_inner_product(buffer, bCols, MPI_DOUBLE, master, MPI_ANY_TAG, MPI_COMM_WORLD, status,
                                     myid, bRows, b, row, ans);
 
             MPI_Bcast(b, bCols, MPI_DOUBLE, master, MPI_COMM_WORLD);
