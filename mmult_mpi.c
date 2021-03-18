@@ -14,7 +14,7 @@
 #include "mat.h"
 #define min(x, y) ((x)<(y)?(x):(y))
 
-void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int source, int tag,
+void compute_inner_product(double **buffer, int bCols, MPI_Datatype datatype, int source, int tag,
              MPI_Comm comm, MPI_Status status, int process_id, int bRows, double *b, int row, 
              int ans) {
 
@@ -38,8 +38,8 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
     }
 }
 
-int main(int argc, char **argv) {
-    double *aa, *a, *b, *c;
+int mmult_mpi(int argc, char **argv) {
+    double *aa, *b, *c;
     int aRows, aCols;
     int bRows, bCols;
     double *buffer, ans;
@@ -47,7 +47,6 @@ int main(int argc, char **argv) {
     double total_times;
     int run_index;
     int nruns;
-    
     int myid, master, numprocs;
     double starttime, endtime;
     MPI_Status status;
@@ -121,4 +120,9 @@ int main(int argc, char **argv) {
     }
     MPI_Finalize();
     return 0;
+}
+
+int main(int argc, char *argv[]) {
+    int to_return = mmult_mpi(argc, argv);
+    return to_return;
 }
