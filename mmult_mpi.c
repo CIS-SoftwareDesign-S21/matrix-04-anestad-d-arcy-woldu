@@ -47,6 +47,7 @@ int main(int argc, char **argv) {
     double total_times;
     int run_index;
     int nruns;
+    
     int myid, master, numprocs;
     double starttime, endtime;
     MPI_Status status;
