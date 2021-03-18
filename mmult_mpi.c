@@ -4,7 +4,7 @@
   * MPI to distribute the computation among nodes and OMP
   * 
   * Compile: mpigcc -g -Wall mmult_mpi mmult_mpi.c
-  * Run: mpiexec -f ~/hosts -n 12 ./mmult_mpi 500
+  * Run: mpiexec -f ~/hosts -n 3 ./mmult_mpi 500
  */
 
 #include "mpi.h"
