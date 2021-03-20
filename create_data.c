@@ -8,7 +8,7 @@
 double calcTime(int (*fun_ptr)(double *c, double *a, int aRows, int aCols, double *b, int bRows, int bCols), double *a, double *b, int n);
 void print_matrix_to_file(FILE *ptr, double *a, double *b, int n);
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
   struct timespec start;
   struct timespec end;
   struct timespec res;
@@ -17,22 +17,28 @@ int main(int argc, char* argv[]){
   FILE *cfPtr;
   if((cfPtr = fopen("data.txt", "w")) == NULL){
     puts("File cannot be opened");
-  }else{
+
+  } else {
+
     if (argc == 3) {
-	int n = get_matrix_size_from_file(argv[1]);
-        a = read_matrix_from_file(argv[1]);
-        b = read_matrix_from_file(argv[2]);
-        print_matrix_to_file(cfPtr, a, b, n);
+      int n = get_matrix_size_from_file(argv[1]);
+      a = read_matrix_from_file(argv[1]);
+      b = read_matrix_from_file(argv[2]);
+      print_matrix_to_file(cfPtr, a, b, n);
+
     } else if (argc != 1) {
-        puts("create_data <file_1> <file_2>");
+      puts("create_data <file_1> <file_2>");
+
     } else {
-    	int n[] = {1,2,3,4,5,10,20,50,100,200,300,400,500};
-    	for(int i = 0; i < 13; i++){
-      	  a = gen_matrix(n[i], n[i]);
-      	  b = gen_matrix(n[i], n[i]);
-      	  print_matrix_to_file(cfPtr, a, b, n[i]);
-    	}
-     }
+
+      int n[] = {1,2,3,4,5,10,20,50,100,200,300,400,500};
+
+      for(int i = 0; i < 13; i++){
+        a = gen_matrix(n[i], n[i]);
+        b = gen_matrix(n[i], n[i]);
+        print_matrix_to_file(cfPtr, a, b, n[i]);
+      }
+    }
   }
 }
 

@@ -39,7 +39,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
     }
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
 
     int nrows, ncols;
     int aRows, aCols;
@@ -69,8 +69,8 @@ int main(int argc, char **argv) {
         // aa = (double*)malloc(sizeof(double) * nrows * ncols);
         b = (double*)malloc(sizeof(double) * ncols);
         c = (double*)malloc(sizeof(double) * nrows);
-
-        buffer = (double*)malloc(sizeof(double) * bCols);
+        buffer = (double*)malloc(sizeof(double) * ncols);
+        
         master = 0;
 
         // Master Process starts here 
