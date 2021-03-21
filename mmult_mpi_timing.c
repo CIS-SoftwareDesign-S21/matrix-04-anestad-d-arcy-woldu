@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
     fclose(output_ptr);
 
     if(argc == 3) {
-        matrices a and b provided
+        // matrices a and b provided
         output_ptr = open_output_file("output/mpi_output.txt");
         
         n = get_matrix_size_from_file(argv[1]);
