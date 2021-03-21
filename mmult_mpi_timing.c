@@ -40,7 +40,7 @@ double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
-    if (argc > 1) {
+    if (argc > 0) {
         nrows = atoi(argv[1]);
         ncols = nrows;
         // aa = (double*)malloc(sizeof(double) * nrows * ncols);
@@ -94,17 +94,17 @@ int main(int argc, char **argv) {
     fclose(output_ptr);
 
     if(argc == 3) {
-        // matrices a and b provided
-        // output_ptr = open_output_file("output/mpi_output.txt");
+        matrices a and b provided
+        output_ptr = open_output_file("output/mpi_output.txt");
         
-        // n = get_matrix_size_from_file(argv[1]);
-        // a = read_matrix_from_file(argv[1]);
-        // b = read_matrix_from_file(argv[2]);
-        // delta_t = mmult_mpi(argc, argv, a, b);
+        n = get_matrix_size_from_file(argv[1]);
+        a = read_matrix_from_file(argv[1]);
+        b = read_matrix_from_file(argv[2]);
+        delta_t = mmult_mpi(argc, argv, a, b);
 
-        // fprintf(output_ptr, "%d", n);
-        // fprintf(output_ptr, ", %f\n", delta_t);
-        // fclose(output_ptr);
+        fprintf(output_ptr, "%d", n);
+        fprintf(output_ptr, ", %f\n", delta_t);
+        fclose(output_ptr);
 
     }
     else if(argc == 2) {
