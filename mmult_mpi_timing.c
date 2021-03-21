@@ -21,8 +21,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
                   MPI_Status status);
 
-double mmult_mpi(int argc, char* argv[])
-{
+double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
     int nrows, ncols;
     double *aa, *b, *c;
     double *buffer, ans;
@@ -35,30 +34,27 @@ double mmult_mpi(int argc, char* argv[])
     MPI_Status status;
     int i, j, numsent, sender;
     int anstype, row;
+
     srand(time(0));
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
-    if (argc > 1) {
-        nrows = atoi(argv[1]);
-        ncols = nrows;
-        // aa = (double*)malloc(sizeof(double) * nrows * ncols);
-        b = (double*)malloc(sizeof(double) * ncols);
-        c = (double*)malloc(sizeof(double) * nrows);
-        buffer = (double*)malloc(sizeof(double) * ncols);
-        master = 0;
-        if (myid == master) {
-            master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status);
-        } else {
-            // Slave Code goes here
-            MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
-            compute_inner_product(buffer, ncols, MPI_DOUBLE, master, 
-                                  MPI_ANY_TAG, MPI_COMM_WORLD, status,
-                                  myid, nrows, b, row, ans);
-        }
+    nrows = atoi(argv[1]);
+    ncols = nrows;
+    // aa = (double*)malloc(sizeof(double) * nrows * ncols);
+    b = (double*)malloc(sizeof(double) * ncols);
+    c = (double*)malloc(sizeof(double) * nrows);
+    buffer = (double*)malloc(sizeof(double) * ncols);
+    master = 0;
+
+    if (myid == master) {
+        master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status);
     } else {
-        fprintf(stderr, "Usage matrix_times_vector <size>\n");
+        MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
+        compute_inner_product(buffer, ncols, MPI_DOUBLE, master, 
+                                MPI_ANY_TAG, MPI_COMM_WORLD, status,
+                                myid, nrows, b, row, ans);
     }
     MPI_Finalize();
     return endtime - starttime;
@@ -72,25 +68,63 @@ FILE * open_output_file() {
     return cfPtr;  
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv) {   
 
-    // if(argc == 3) {
-    //     // matrices a and b provided
-    //     int n = get_matrix_size_from_file(argv[1]);
-    //     a = read_matrix_from_file(argv[1]);
-    //     b = read_matrix_from_file(argv[2]);
-    // }
-    // else if(argc == 1) {
-    //     // business as usual, gen a random square matrices of size argv[1]
-    // }
-    // else {
-    //     // run through the matrices stored in the input dir
-    // }
-    // // no matrices provided (pass a default value)
+    double delta_t;
+    double *a, *b;
+    FILE *output_ptr;
+    int n, m;
 
+    if(argc == 3) {
+        // matrices a and b provided
+        output_ptr = open_output_file();
+        
+        n = get_matrix_size_from_file(argv[1]);
+        a = read_matrix_from_file(argv[1]);
+        b = read_matrix_from_file(argv[2]);
+        delta_t = mmult_mpi(argc, argv, a, b);
 
-    double delta_t = mmult_mpi(argc, argv);
-    // f_ptr = open_file();
+        fprintf(output_ptr, "%d", n);
+        fprintf(output_ptr, ", %f\n", delta_t);
+
+    }
+    else if(argc == 2) {
+        // business as usual, gen a random square matrices of size argv[1]
+
+        output_ptr = open_output_file();
+        n = argv[1];
+        m = n;
+
+        a = gen_matrix(m, n);
+        b = gen_matrix(m, n);
+
+        delta_t = mmult_mpi(argc, argv, a, b);
+        fprintf(output_ptr, "%d", n);
+        fprintf(output_ptr, ", %f\n", delta_t);
+
+    }
+    else {
+        // no matrices provided (pass a default value)
+        // run through the matrices stored in the input dir
+
+        int N[] = {1,2,3,4,5,10,20,50,100,200,300,400,500};
+        for(int i = 0; i < N; i++) {
+            
+            output_ptr = open_output_file();
+
+            char buffer_a[500]; // The filename buffer.
+            char buffer_b[500]; // The filename buffer.
+            sprintf (buffer_a, "input/a/a_%d.txt", N[i]);
+            sprintf (buffer_b, "input/b/b_%d.txt", N[i]);
+
+            a = read_matrix_from_file(buffer_a);
+            b = read_matrix_from_file(buffer_b);
+
+            delta_t = mmult_mpi(argc, argv, a, b);
+            fprintf(output_ptr, "%d", n);
+            fprintf(output_ptr, ", %f\n", delta_t);
+        }
+    }
     return 0;
 }
 
@@ -135,14 +169,11 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
 
 void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int source, int tag,
              MPI_Comm mpi_comm, MPI_Status status, int process_id, int bRows, double *b, int row, 
-             int ans) 
-{
+             int ans) {
 
     // each slave process id corresponds to the ith row it will be responsible for
     if (process_id <= bRows) {
-
         while(1) {
-
             MPI_Recv(buffer, bCols, datatype, source, tag, mpi_comm, &status);
             if (status.MPI_TAG == 0) {
                 break;
