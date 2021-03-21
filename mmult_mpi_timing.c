@@ -80,10 +80,10 @@ int main(int argc, char **argv) {
     double *a, *b;
     FILE *output_ptr;
     int n, m;
-    
+
     a = gen_matrix(m, n);
     b = gen_matrix(m, n);
-
+    
     output_ptr = open_output_file("output/mpi_output.txt");
     delta_t = mmult_mpi(argc, argv, a, b);
 
