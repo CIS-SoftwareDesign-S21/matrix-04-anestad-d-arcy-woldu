@@ -35,24 +35,37 @@ int main(int argc, char* argv[]) {
 
                 a = gen_matrix(n[i], n[i]);
                 b = gen_matrix(n[i], n[i]);
-                printf("%i\n", a[0]);
-                // fprintf(f_ptr_a, "%d ", a);
-                // fprintf(f_ptr_b, "%d ", b);
-                // fwrite(a, sizeof(int), (n[i]*n[i]), f_ptr_a);
-                // fwrite(a, sizeof(int), (n[i]*n[i]), f_ptr_b);
 
                 write_matrices(f_ptr_a, f_ptr_b, a, b, n[i]);
 
                 fclose(f_ptr_a);
                 fclose(f_ptr_b);
         }
+        // FOR TESTING PURPOSES, Will be moved later when actual test units are created
+        // int N = get_matrix_size_from_file("input/a/a_50.txt");
+        // double *test = read_matrix_from_file("input/a/a_50.txt");
+        // for (int i = 0 ;i<N*N; i++) {
+        //         printf("%0.2f\n", test[i]);
+        // }
 }
 
 void write_matrices(FILE *ptr_a, FILE *ptr_b, double *a, double *b, int N) {
+        fprintf(ptr_a, "%d %d", N, N);
         for (int i = 0; i < N*N; i++) {
-                fprintf(ptr_a, "%0.2f ", a[i] * 100);
+                if( (i % N*N) == 0) {
+                        fprintf(ptr_a, "\n%0.2f ", a[i] * 100);
+                }
+                else {
+                        fprintf(ptr_a, "%0.2f ", a[i] * 100);
+                }         
         }
+        fprintf(ptr_b, "%d %d\n", N, N);
         for (int i = 0; i < N*N; i++) {
-                fprintf(ptr_b, "%0.2f ", b[i] * 100);
+                if( (i % N*N) == 0) {
+                        fprintf(ptr_b, "\n%0.2f ", b[i] * 100);
+                }
+                else {
+                        fprintf(ptr_b, "%0.2f ", b[i] * 100);
+                }  
         }
 }
