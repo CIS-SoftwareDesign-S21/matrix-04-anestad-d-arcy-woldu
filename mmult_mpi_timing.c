@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
         // run through the matrices stored in the input dir
 
         int N[] = {1,2,3,4,5,10,20,50,100,200,300,400,500};
-        for(int i = 0; i < N; i++) {
+        for(int i = 0; i < 13; i++) {
 
             output_ptr = open_output_file("output/mpi_output.txt");
 
