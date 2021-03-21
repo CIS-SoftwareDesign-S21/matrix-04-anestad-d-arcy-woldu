@@ -19,7 +19,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
              int ans); 
 
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
-                  MPI_Status status, double *total_times);
+                  MPI_Status status, double starttime, double endtime);
 
 double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
     int nrows, ncols;
@@ -50,7 +50,7 @@ double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
         master = 0;
 
         if (myid == master) {
-            master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status, &total_times);
+            master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status, starttime, endtime);
         } else {
             MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
             compute_inner_product(buffer, ncols, MPI_DOUBLE, master, 
@@ -63,6 +63,7 @@ double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
     }
 
     MPI_Finalize();
+    total_times = endtime - starttime;
     return total_times;
 }
 
@@ -80,6 +81,7 @@ int main(int argc, char **argv) {
     double *a, *b;
     FILE *output_ptr;
     int n, m;
+    double starttime, endtime;
 
     // n = atoi(argv[1]);
     // m = atoi(argv[1]);
@@ -151,9 +153,9 @@ int main(int argc, char **argv) {
 
 
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
-                  MPI_Status status, double *total_times) {
+                  MPI_Status status, double starttime, double endtime) {
                     
-    double starttime, endtime;
+    
     int anstype, numsent, sender;
 
     // Master Code goes here
@@ -184,8 +186,7 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
         }
     } 
     endtime = MPI_Wtime();
-    total_times = &(endtime - starttime);
-    printf("%f\n",total_times);
+    printf("%f\n",endtime - starttime);
 }
 
 
