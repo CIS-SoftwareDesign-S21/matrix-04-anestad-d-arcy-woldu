@@ -81,6 +81,9 @@ int main(int argc, char **argv) {
     FILE *output_ptr;
     int n, m;
 
+    n = argv[1];
+    m = argv[1];
+    
     a = gen_matrix(m, n);
     b = gen_matrix(m, n);
     
