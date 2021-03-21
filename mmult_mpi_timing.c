@@ -139,7 +139,7 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
     int anstype, numsent, sender;
 
     // Master Code goes here
-    aa = gen_matrix(nrows, ncols);
+    // aa = gen_matrix(nrows, ncols);
     starttime = MPI_Wtime();
     numsent = 0;
     MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
