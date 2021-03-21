@@ -96,13 +96,14 @@ void loop_mmult_mpi(int argc, char* argv[]) {
     MPI_Status status;
     int i, j, numsent, sender;
     int anstype, row;
-    int N[] = {1,2,3,4,5,10,20,50,100,200,300,400,500};
+    
 
     srand(time(0));
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
+    int N[] = {1,2,3,4,5,10,20,50,100,200,300,400,500};
     for(int i = 0; i < 13; i++) {
         output_ptr = open_output_file("output/mpi_output.txt");
 
@@ -111,7 +112,7 @@ void loop_mmult_mpi(int argc, char* argv[]) {
         sprintf (buffer_a, "input/a/a_%d.txt", N[i]);
         sprintf (buffer_b, "input/b/b_%d.txt", N[i]);
 
-        a = read_matrix_from_file(buffer_a);
+        aa = read_matrix_from_file(buffer_a);
         b = read_matrix_from_file(buffer_b);
 
         if (argc > 0) {
