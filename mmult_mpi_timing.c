@@ -43,7 +43,7 @@ double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
     nrows = atoi(argv[1]);
     ncols = nrows;
     // aa = (double*)malloc(sizeof(double) * nrows * ncols);
-    b = (double*)malloc(sizeof(double) * ncols);
+    // b = (double*)malloc(sizeof(double) * ncols);
     c = (double*)malloc(sizeof(double) * nrows);
     buffer = (double*)malloc(sizeof(double) * ncols);
     master = 0;
