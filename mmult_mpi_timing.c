@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
 
 void loop_mmult_mpi(int argc, char* argv[]) {
     int nrows, ncols;
-    double *c;
+    double *b, *c;
     double *buffer, ans;
     double *times;
     double total_times;
@@ -125,8 +125,9 @@ void loop_mmult_mpi(int argc, char* argv[]) {
                 sprintf (buffer_b, "input/b/b_%d.txt", N[i]);
 
                 double * aa = read_matrix_from_file(buffer_a);
-                double * b = read_matrix_from_file(buffer_b);
-                master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status, output_ptr);
+                double * bb = read_matrix_from_file(buffer_b);
+                b = &bb;
+                master_code(aa, bb, c, buffer, ans, nrows, ncols, master, numprocs, status, output_ptr);
             }
             
         } else {
