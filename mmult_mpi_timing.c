@@ -19,7 +19,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
              int ans); 
 
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
-                  MPI_Status status);
+                  MPI_Status status, double *total_times);
 
 double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
     int nrows, ncols;
@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
 
 
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
-                  MPI_Status status, int *total_times) {
+                  MPI_Status status, double *total_times) {
                     
     double starttime, endtime;
     int anstype, numsent, sender;
