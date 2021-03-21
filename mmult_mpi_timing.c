@@ -19,9 +19,9 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
              int ans); 
 
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
-                  MPI_Status status);
+                  MPI_Status status, FILE *output_ptr);
 
-double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
+double mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) {
     int nrows, ncols;
     double *c;
     double *buffer, ans;
@@ -50,7 +50,7 @@ double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
         master = 0;
 
         if (myid == master) {
-            master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status);
+            master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status, output_ptr);
         } else {
             MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
             compute_inner_product(buffer, ncols, MPI_DOUBLE, master, 
@@ -100,11 +100,7 @@ int main(int argc, char **argv) {
         n = get_matrix_size_from_file(argv[1]);
         a = read_matrix_from_file(argv[1]);
         b = read_matrix_from_file(argv[2]);
-        delta_t = mmult_mpi(argc, argv, a, b);
-
-        fprintf(output_ptr, "%d", n);
-        fprintf(output_ptr, ", %f\n", delta_t);
-        fclose(output_ptr);
+        mmult_mpi(argc, argv, a, b, output_ptr);
 
     }
     else if(argc == 2) {
@@ -116,11 +112,7 @@ int main(int argc, char **argv) {
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
-        delta_t = mmult_mpi(argc, argv, a, b);
-
-        fprintf(output_ptr, "%d", n);
-        fprintf(output_ptr, ", %f\n", delta_t);
-        fclose(output_ptr);
+        mmult_mpi(argc, argv, a, b, output_ptr);
 
     }
     else {
@@ -139,11 +131,7 @@ int main(int argc, char **argv) {
 
             a = read_matrix_from_file(buffer_a);
             b = read_matrix_from_file(buffer_b);
-            delta_t = mmult_mpi(argc, argv, a, b);
-
-            fprintf(output_ptr, "%d", N[i]);
-            fprintf(output_ptr, ", %f\n", delta_t);
-            fclose(output_ptr);
+            mmult_mpi(argc, argv, a, b, output_ptr);
         }
     }
     return 0;
@@ -151,7 +139,7 @@ int main(int argc, char **argv) {
 
 
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
-                  MPI_Status status) {
+                  MPI_Status status, FILE *output_ptr) {
                     
     double starttime, endtime;
     int anstype, numsent, sender;
@@ -184,6 +172,9 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
         }
     } 
     endtime = MPI_Wtime();
+    fprintf(output_ptr, "%d", nrows);
+    fprintf(output_ptr, ", %f\n", (endtime - starttime));
+    fclose(output_ptr);
     printf("%f\n",(endtime - starttime));
 }
 
