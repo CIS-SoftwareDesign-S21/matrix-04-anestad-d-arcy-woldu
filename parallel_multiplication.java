@@ -14,7 +14,6 @@ public class parallel_multiplication {
         start = System.currentTimeMillis();
         int[] d = multiply_matrices_parallel(ma, size, size, mb, size, size);
         System.out.println("Optimized: " + (double)(System.currentTimeMillis() - start) / 1000 + "ms");
-        if (are_equal(c, d)) System.out.println("Nice.");
     }
 
     public static int[] multiply_matrices(int[] matrix_a, int a_row, int a_col, int[] matrix_b, int b_row, int b_col) {
@@ -32,11 +31,15 @@ public class parallel_multiplication {
     public static int[] multiply_matrices_parallel(int[] matrix_a, int a_row, int a_col, int[] matrix_b, int b_row, int b_col) {
         int[] matrix_c = new int[a_row * b_col];
         for (int i = 0; i < a_row; i++) {
-            for (int k = 0; k < a_row; k++) {
-                for (int l = 0; l < b_row; l++) {
-                    matrix_c[i * b_col + l] = matrix_a[i * a_row + k] + matrix_b[k * b_col + l];
+            int finalI = i;
+            Thread t = new Thread(() -> {
+                for (int k = 0; k < a_row; k++) {
+                    for (int l = 0; l < b_row; l++) {
+                        matrix_c[finalI * b_col + l] += matrix_a[finalI * a_row + k] * matrix_b[k * b_col + l];
+                    }
                 }
-            }
+            });
+            t.start();
         }
         return matrix_c;
     }
