@@ -60,10 +60,10 @@ double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
     return endtime - starttime;
 }
 
-FILE * open_output_file() {
+FILE * open_output_file(const char * path) {
     FILE *cfPtr;
-    if((cfPtr = fopen("output/mpi_output.txt", "w")) == NULL){
-    puts("File cannot be opened");
+    if((cfPtr = fopen(path, "w")) == NULL) {
+        puts("File cannot be opened");
     }
     return cfPtr;  
 }
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 
     if(argc == 3) {
         // matrices a and b provided
-        output_ptr = open_output_file();
+        output_ptr = open_output_file("output/mpi_output.txt");
         
         n = get_matrix_size_from_file(argv[1]);
         a = read_matrix_from_file(argv[1]);
@@ -86,21 +86,23 @@ int main(int argc, char **argv) {
 
         fprintf(output_ptr, "%d", n);
         fprintf(output_ptr, ", %f\n", delta_t);
+        fclose(output_ptr);
 
     }
     else if(argc == 2) {
         // business as usual, gen a random square matrices of size argv[1]
 
-        output_ptr = open_output_file();
+        output_ptr = open_output_file("output/mpi_output.txt");
         n = argv[1];
         m = n;
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
-
         delta_t = mmult_mpi(argc, argv, a, b);
+
         fprintf(output_ptr, "%d", n);
         fprintf(output_ptr, ", %f\n", delta_t);
+        fclose(output_ptr);
 
     }
     else {
@@ -109,8 +111,8 @@ int main(int argc, char **argv) {
 
         int N[] = {1,2,3,4,5,10,20,50,100,200,300,400,500};
         for(int i = 0; i < N; i++) {
-            
-            output_ptr = open_output_file();
+
+            output_ptr = open_output_file("output/mpi_output.txt");
 
             char buffer_a[500]; // The filename buffer.
             char buffer_b[500]; // The filename buffer.
@@ -119,10 +121,11 @@ int main(int argc, char **argv) {
 
             a = read_matrix_from_file(buffer_a);
             b = read_matrix_from_file(buffer_b);
-
             delta_t = mmult_mpi(argc, argv, a, b);
-            fprintf(output_ptr, "%d", n);
+
+            fprintf(output_ptr, "%d", N[i]);
             fprintf(output_ptr, ", %f\n", delta_t);
+            fclose(output_ptr);
         }
     }
     return 0;
