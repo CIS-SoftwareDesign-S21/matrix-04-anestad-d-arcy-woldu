@@ -109,7 +109,7 @@ void loop_mmult_mpi(int argc, char* argv[]) {
         nrows = atoi(argv[1]);
         ncols = nrows;
         // aa = (double*)malloc(sizeof(double) * nrows * ncols);
-        b = (double*)malloc(sizeof(double) * ncols);
+        // b = (double*)malloc(sizeof(double) * ncols);
         c = (double*)malloc(sizeof(double) * nrows);
         buffer = (double*)malloc(sizeof(double) * ncols);
         master = 0;
@@ -117,15 +117,15 @@ void loop_mmult_mpi(int argc, char* argv[]) {
         if (myid == master) {
             int N[] = {1,2,3,4,5,10,20,50,100,200,300,400,500};
             for(int i = 0; i < 13; i++) {
-                output_ptr = open_output_file("output/mpi_output.txt");
+                FILE * output_ptr = open_output_file("output/mpi_output.txt");
 
                 char buffer_a[2001]; // The filename buffer.
                 char buffer_b[2001]; // The filename buffer.
                 sprintf (buffer_a, "input/a/a_%d.txt", N[i]);
                 sprintf (buffer_b, "input/b/b_%d.txt", N[i]);
 
-                aa = read_matrix_from_file(buffer_a);
-                b = read_matrix_from_file(buffer_b);
+                double * aa = read_matrix_from_file(buffer_a);
+                double * b = read_matrix_from_file(buffer_b);
                 master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status, output_ptr);
             }
             
