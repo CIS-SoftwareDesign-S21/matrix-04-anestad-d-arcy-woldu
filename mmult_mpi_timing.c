@@ -64,6 +64,7 @@ double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
 
     MPI_Finalize();
     total_times = endtime - starttime;
+    printf("%f\n", total_times);
     return total_times;
 }
 
@@ -186,7 +187,6 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
         }
     } 
     endtime = MPI_Wtime();
-    printf("%f\n",endtime - starttime);
 }
 
 
