@@ -184,7 +184,7 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
         }
     } 
     endtime = MPI_Wtime();
-    total_times = endtime - starttime;
+    total_times = &(endtime - starttime);
     printf("%f\n",total_times);
 }
 
