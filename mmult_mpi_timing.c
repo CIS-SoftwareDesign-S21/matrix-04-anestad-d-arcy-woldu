@@ -89,6 +89,7 @@ int main(int argc, char **argv) {
             a = read_matrix_from_file(buffer_a);
             b = read_matrix_from_file(buffer_b);
             mmult_mpi(argc, argv, a, b, output_ptr);
+            sleep(1);
         }
     }
     return 0;
