@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
     else if(argc == 2) {
         // business as usual, gen a random square matrices of size argv[1]
 
-        output_ptr = open_output_file("output/mpi_output.txt");
+        // output_ptr = open_output_file("output/mpi_output.txt");
         n = argv[1];
         m = n;
 
@@ -100,9 +100,9 @@ int main(int argc, char **argv) {
         b = gen_matrix(m, n);
         delta_t = mmult_mpi(argc, argv, a, b);
 
-        fprintf(output_ptr, "%d", n);
-        fprintf(output_ptr, ", %f\n", delta_t);
-        fclose(output_ptr);
+        // fprintf(output_ptr, "%d", n);
+        // fprintf(output_ptr, ", %f\n", delta_t);
+        // fclose(output_ptr);
 
     }
     else {
