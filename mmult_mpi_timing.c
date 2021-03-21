@@ -44,7 +44,7 @@ double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
         nrows = atoi(argv[1]);
         ncols = nrows;
         // aa = (double*)malloc(sizeof(double) * nrows * ncols);
-        // b = (double*)malloc(sizeof(double) * ncols);
+        b = (double*)malloc(sizeof(double) * ncols);
         c = (double*)malloc(sizeof(double) * nrows);
         buffer = (double*)malloc(sizeof(double) * ncols);
         master = 0;
@@ -83,7 +83,13 @@ int main(int argc, char **argv) {
 
     a = gen_matrix(m, n);
     b = gen_matrix(m, n);
-    mmult_mpi(argc, argv, a, b);
+    
+    output_ptr = open_output_file("output/mpi_output.txt");
+    delta_t = mmult_mpi(argc, argv, a, b);
+
+    fprintf(output_ptr, "%d", n);
+    fprintf(output_ptr, ", %f\n", delta_t);
+    fclose(output_ptr);
 
     // if(argc == 3) {
     //     // matrices a and b provided
