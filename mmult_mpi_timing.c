@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
-        delta_t = mmult_mpi(argc, argv, a, b);
+        mmult_mpi(argc, argv, a, b);
 
         // fprintf(output_ptr, "%d", n);
         // fprintf(output_ptr, ", %f\n", delta_t);
