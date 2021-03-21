@@ -81,17 +81,17 @@ int main(int argc, char **argv) {
     FILE *output_ptr;
     int n, m;
 
-    n = atoi(argv[1]);
-    m = atoi(argv[1]);
-    a = gen_matrix(m, n);
-    b = gen_matrix(m, n);
+    // n = atoi(argv[1]);
+    // m = atoi(argv[1]);
+    // a = gen_matrix(m, n);
+    // b = gen_matrix(m, n);
     
-    output_ptr = open_output_file("output/mpi_output.txt");
-    delta_t = mmult_mpi(argc, argv, a, b);
+    // output_ptr = open_output_file("output/mpi_output.txt");
+    // delta_t = mmult_mpi(argc, argv, a, b);
 
-    fprintf(output_ptr, "%d", n);
-    fprintf(output_ptr, ", %f\n", delta_t);
-    fclose(output_ptr);
+    // fprintf(output_ptr, "%d", n);
+    // fprintf(output_ptr, ", %f\n", delta_t);
+    // fclose(output_ptr);
 
     if(argc == 3) {
         // matrices a and b provided
