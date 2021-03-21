@@ -21,50 +21,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
                   MPI_Status status, FILE *output_ptr);
 
-double mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) {
-    int nrows, ncols;
-    double *c;
-    double *buffer, ans;
-    double *times;
-    double total_times;
-    int run_index;
-    int nruns;
-    int myid, master, numprocs;
-    double starttime, endtime;
-    MPI_Status status;
-    int i, j, numsent, sender;
-    int anstype, row;
-
-    srand(time(0));
-    MPI_Init(&argc, &argv);
-    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
-    MPI_Comm_rank(MPI_COMM_WORLD, &myid);
-
-    if (argc > 0) {
-        nrows = atoi(argv[1]);
-        ncols = nrows;
-        // aa = (double*)malloc(sizeof(double) * nrows * ncols);
-        b = (double*)malloc(sizeof(double) * ncols);
-        c = (double*)malloc(sizeof(double) * nrows);
-        buffer = (double*)malloc(sizeof(double) * ncols);
-        master = 0;
-
-        if (myid == master) {
-            master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status, output_ptr);
-        } else {
-            MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
-            compute_inner_product(buffer, ncols, MPI_DOUBLE, master, 
-                                    MPI_ANY_TAG, MPI_COMM_WORLD, status,
-                                    myid, nrows, b, row, ans);
-        }
-        
-    } else {
-        fprintf(stderr, "Usage matrix_times_vector <size>\n");
-    }
-
-    MPI_Finalize();
-    return endtime - starttime;
-}
+void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr);
 
 FILE * open_output_file(const char * path) {
     FILE *cfPtr;
@@ -124,8 +81,8 @@ int main(int argc, char **argv) {
 
             output_ptr = open_output_file("output/mpi_output.txt");
 
-            char buffer_a[500]; // The filename buffer.
-            char buffer_b[500]; // The filename buffer.
+            char buffer_a[2001]; // The filename buffer.
+            char buffer_b[2001]; // The filename buffer.
             sprintf (buffer_a, "input/a/a_%d.txt", N[i]);
             sprintf (buffer_b, "input/b/b_%d.txt", N[i]);
 
@@ -135,6 +92,50 @@ int main(int argc, char **argv) {
         }
     }
     return 0;
+}
+
+void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) {
+    int nrows, ncols;
+    double *c;
+    double *buffer, ans;
+    double *times;
+    double total_times;
+    int run_index;
+    int nruns;
+    int myid, master, numprocs;
+    double starttime, endtime;
+    MPI_Status status;
+    int i, j, numsent, sender;
+    int anstype, row;
+
+    srand(time(0));
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+    MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+
+    if (argc > 0) {
+        nrows = atoi(argv[1]);
+        ncols = nrows;
+        // aa = (double*)malloc(sizeof(double) * nrows * ncols);
+        b = (double*)malloc(sizeof(double) * ncols);
+        c = (double*)malloc(sizeof(double) * nrows);
+        buffer = (double*)malloc(sizeof(double) * ncols);
+        master = 0;
+
+        if (myid == master) {
+            master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status, output_ptr);
+        } else {
+            MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
+            compute_inner_product(buffer, ncols, MPI_DOUBLE, master, 
+                                    MPI_ANY_TAG, MPI_COMM_WORLD, status,
+                                    myid, nrows, b, row, ans);
+        }
+        
+    } else {
+        fprintf(stderr, "Usage matrix_times_vector <size>\n");
+    }
+
+    MPI_Finalize();
 }
 
 
