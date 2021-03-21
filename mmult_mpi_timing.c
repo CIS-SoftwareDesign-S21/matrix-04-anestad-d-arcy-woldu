@@ -23,7 +23,7 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
 
 double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
     int nrows, ncols;
-    double *aa, *b, *c;
+    double *c;
     double *buffer, ans;
     double *times;
     double total_times;
