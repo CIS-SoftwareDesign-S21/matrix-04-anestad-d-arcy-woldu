@@ -19,7 +19,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
              int ans); 
 
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
-                  MPI_Status status, double starttime, double endtime);
+                  MPI_Status status);
 
 double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
     int nrows, ncols;
@@ -50,7 +50,7 @@ double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
         master = 0;
 
         if (myid == master) {
-            master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status, starttime, endtime);
+            master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status);
         } else {
             MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
             compute_inner_product(buffer, ncols, MPI_DOUBLE, master, 
@@ -63,9 +63,7 @@ double mmult_mpi(int argc, char* argv[], double *aa, double *b) {
     }
 
     MPI_Finalize();
-    total_times = endtime - starttime;
-    printf("%f\n", total_times);
-    return total_times;
+    return endtime - starttime;
 }
 
 FILE * open_output_file(const char * path) {
@@ -82,7 +80,6 @@ int main(int argc, char **argv) {
     double *a, *b;
     FILE *output_ptr;
     int n, m;
-    double starttime, endtime;
 
     // n = atoi(argv[1]);
     // m = atoi(argv[1]);
@@ -119,7 +116,7 @@ int main(int argc, char **argv) {
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
-        mmult_mpi(argc, argv, a, b);
+        delta_t = mmult_mpi(argc, argv, a, b);
 
         fprintf(output_ptr, "%d", n);
         fprintf(output_ptr, ", %f\n", delta_t);
@@ -154,9 +151,9 @@ int main(int argc, char **argv) {
 
 
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
-                  MPI_Status status, double starttime, double endtime) {
+                  MPI_Status status) {
                     
-    
+    double starttime, endtime;
     int anstype, numsent, sender;
 
     // Master Code goes here
@@ -187,6 +184,7 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
         }
     } 
     endtime = MPI_Wtime();
+    printf("%f\n",(endtime - starttime));
 }
 
 
