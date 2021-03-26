@@ -42,25 +42,23 @@ int main(int argc, char **argv) {
         // business as usual, gen a random square matrices of size argv[1]
 
         output_ptr = open_output_file("output/singe_mpi_run.txt");
-        test_output = 0;
 
         n = atoi(argv[1]);
         m = atoi(argv[1]);
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
-        mmult_mpi(argc, argv, a, b, n, output_ptr, test_output);
+        mmult_mpi(argc, argv, a, b, n, output_ptr);
 
     }
     else if(argc == 3) {
         // matrices a and b provided
         output_ptr = open_output_file("output/mpi_data.txt");
-        test_output = 0;
 
         n = get_matrix_size_from_file(argv[1]);
         a = read_matrix_from_file(argv[1]);
         b = read_matrix_from_file(argv[2]);
-        mmult_mpi(argc, argv, a, b, n, output_ptr, test_output);
+        mmult_mpi(argc, argv, a, b, n, output_ptr);
         sleep(1);
     }
 }
@@ -131,8 +129,6 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
         anstype = status.MPI_TAG;
         c[anstype-1] = ans;
 
-        // if test_output = 1, write output
-        
 
         // if we haven't finished the job, keep sending more rows to the slave processes, until all rows are accounted for
         if (numsent < nrows) {
