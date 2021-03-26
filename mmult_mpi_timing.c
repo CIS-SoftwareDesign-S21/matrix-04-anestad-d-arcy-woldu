@@ -169,7 +169,8 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
 
     // each slave process id corresponds to the ith row it will be responsible for
     if (process_id <= bRows) {
-        FILE * out = open_output_file("mpi_slave_log.txt");
+        FILE * out = open_output_file("log_mpi_inner_product.txt");
+        FILE * out2 = open_output_file("log_mpi_ans.txt");
         while(1) {
             MPI_Recv(buffer, bCols, datatype, source, tag, mpi_comm, &status);
             if (status.MPI_TAG == 0) {
@@ -182,6 +183,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
                 fprintf(out, "PROCESS_id: %d buffer: %f b_col: %f ANS: %f\n", process_id, buffer[j], b[j], ans);
             }
             // send answer to master, along with the row #
+            fprintf(out2, "ANS: %f ", ans);
             MPI_Send(&ans, 1, datatype, source, row, mpi_comm);
         }
     }
