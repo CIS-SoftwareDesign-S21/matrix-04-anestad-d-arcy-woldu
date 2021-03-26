@@ -179,8 +179,8 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
             ans = 0.0;
             for (int j = 0; j < bCols; j++) {
                 ans += buffer[j] * b[j];
+                fprintf(out, "BUFFER: %f B: %f ", buffer[j], b[j]);
             }
-            fprintf(out, "%f ", ans);
             // send answer to master, along with the row #
             MPI_Send(&ans, 1, datatype, source, row, mpi_comm);
         }
