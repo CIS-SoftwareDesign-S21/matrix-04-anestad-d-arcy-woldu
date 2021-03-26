@@ -26,7 +26,7 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *o
 void loop_mmult_mpi(int argc, char* argv[]);
 
 
-FILE * open_file(const char * path, const char mode) {
+FILE * open_file(const char * path, const char * mode) {
     /*
         This code 
     */
