@@ -100,15 +100,16 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *o
 
     if (argc > 1) {
         ncols = nrows;
-        // aa = (double*)malloc(sizeof(double) * nrows * ncols);
-        // b = (double*)malloc(sizeof(double) * ncols);
         c = (double*)malloc(sizeof(double) * nrows);
         buffer = (double*)malloc(sizeof(double) * ncols);
         master = 0;
 
         if (myid == master) {
+            // master code starts here, which delegates tasks to compute
             master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status, output_ptr);
         } else {
+
+            // Slave process receives matrix b sent from master and computes inner product
             MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
             compute_inner_product(buffer, ncols, MPI_DOUBLE, master, 
                                     MPI_ANY_TAG, MPI_COMM_WORLD, status,
@@ -128,11 +129,13 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
     double starttime, endtime;
     int anstype, numsent, sender;
 
-    // Master Code goes here
-    // aa = gen_matrix(nrows, ncols);
     starttime = MPI_Wtime();
     numsent = 0;
+
+    // send matrix b to all the slave processes
     MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
+
+    // iterate through matrix a and send its columns to each slave processes
     for (int i = 0; i < min(numprocs-1, nrows); i++) {
         for (int j = 0; j < ncols; j++) {
             buffer[j] = aa[i * ncols + j];
@@ -140,11 +143,15 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
         MPI_Send(buffer, ncols, MPI_DOUBLE, i+1, i+1, MPI_COMM_WORLD);
         numsent++;
     }
+
+    // Recieve the answers computed by the slave processes and append it to matrix c
     for (int i = 0; i < nrows; i++) {
         MPI_Recv(&ans, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         sender = status.MPI_SOURCE;
         anstype = status.MPI_TAG;
         c[anstype-1] = ans;
+
+        // if we haven't finished the job, keep sending more rows to the slave processes, until all rows are accounted for
         if (numsent < nrows) {
             for (int j = 0; j < ncols; j++) {
                 buffer[j] = aa[numsent*ncols + j];
@@ -152,6 +159,7 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
             MPI_Send(buffer, ncols, MPI_DOUBLE, sender, numsent+1, MPI_COMM_WORLD);
             numsent++;
         } else {
+            // job done!
             MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
         }
     } 
