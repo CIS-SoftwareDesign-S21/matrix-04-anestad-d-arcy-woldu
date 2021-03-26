@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
         FILE *f_ptr_b;
         double *a, *b;
 
-        int n[] = {1,2,3,4,5,10,20,50,100,200,300,400,500};
+        int n[] = {1, 2, 3, 4, 5, 10, 20, 50, 100, 200, 300, 400, 500};
         for(int i = 0; i < 13; i++) {
 
                 char buffer_a[500]; // The filename buffer.
@@ -59,7 +59,7 @@ void write_matrices(FILE *ptr_a, FILE *ptr_b, double *a, double *b, int N) {
                         fprintf(ptr_a, "%0.2f ", a[i] * 100);
                 }         
         }
-        fprintf(ptr_b, "%d %d\n", N, N);
+        fprintf(ptr_b, "%d %d", N, N);
         for (int i = 0; i < N*N; i++) {
                 if( (i % N*N) == 0) {
                         fprintf(ptr_b, "\n%0.2f ", b[i] * 100);
