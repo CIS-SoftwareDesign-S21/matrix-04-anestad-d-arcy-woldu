@@ -44,13 +44,11 @@ int main(int argc, char **argv) {
     FILE *output_ptr;
     int n, m;
 
-    output_ptr = open_file("output/sample_log.txt", 'a');
-
     if(argc == 2) {
         // business as usual, gen a random square matrices of size argv[1]
         output_ptr = open_file("mpi_sample_log.txt", 'a');
         n = atoi(argv[1]);
-        m = atoi(argv[1]);
+        m = n;
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
@@ -60,7 +58,7 @@ int main(int argc, char **argv) {
     else if(argc == 3) {
         // matrices a and b are provided for
         output_ptr = open_file("mpi_multirun_log.txt", 'a');
-        
+
         n = get_matrix_size_from_file(argv[1]);
         a = read_matrix_from_file(argv[1]);
         b = read_matrix_from_file(argv[2]);
