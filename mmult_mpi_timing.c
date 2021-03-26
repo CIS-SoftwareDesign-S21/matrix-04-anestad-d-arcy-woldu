@@ -39,44 +39,36 @@ int main(int argc, char **argv) {
     FILE *output_ptr;
     int n, m;
 
-    n = atoi(argv[1]);
-    m = atoi(argv[2]);
-    a = gen_matrix(m, n);
-    b = gen_matrix(m, n);
-    
-    output_ptr = open_output_file("output/mpii_output.txt");
-    mmult_mpi(argc, argv, a, b, n, output_ptr);
+    fprintf(output_ptr, "%d", n);
+    fprintf(output_ptr, ", %f\n", delta_t);
+    fclose(output_ptr);
 
-    // fprintf(output_ptr, "%d", n);
-    // fprintf(output_ptr, ", %f\n", delta_t);
-    // fclose(output_ptr);
-
-    // if (argc == 0) {
-    //     fprintf(stderr, "Usage matrix_times_vector <size>\n");
-    //     return 0;
-    // }
-    // else if(argc == 3) {
-    //     // matrices a and b provided
-    //     output_ptr = open_output_file("output/mpi_output.txt");
+    if (argc == 0) {
+        fprintf(stderr, "Usage matrix_times_vector <size>\n");
+        return 0;
+    }
+    else if(argc == 3) {
+        // matrices a and b provided
+        output_ptr = open_output_file("output/mpi_output.txt");
         
-    //     n = get_matrix_size_from_file(argv[1]);
-    //     a = read_matrix_from_file(argv[1]);
-    //     b = read_matrix_from_file(argv[2]);
-    //     mmult_mpi(argc, argv, a, b, n, output_ptr);
-    //     sleep(1);
-    // }
-    // else if(argc == 2) {
-    //     // business as usual, gen a random square matrices of size argv[1]
+        n = get_matrix_size_from_file(argv[1]);
+        a = read_matrix_from_file(argv[1]);
+        b = read_matrix_from_file(argv[2]);
+        mmult_mpi(argc, argv, a, b, n, output_ptr);
+        sleep(1);
+    }
+    else if(argc == 2) {
+        // business as usual, gen a random square matrices of size argv[1]
 
-    //     output_ptr = open_output_file("output/mpi_output.txt");
-    //     n = atoi(argv[1]);
-    //     m = n;
+        output_ptr = open_output_file("output/mpi_output.txt");
+        n = atoi(argv[1]);
+        m = n;
 
-    //     a = gen_matrix(m, n);
-    //     b = gen_matrix(m, n);
-    //     mmult_mpi(argc, argv, a, b, n, output_ptr);
+        a = gen_matrix(m, n);
+        b = gen_matrix(m, n);
+        mmult_mpi(argc, argv, a, b, n, output_ptr);
 
-    // }
+    }
     return 0;
 }
 
@@ -86,7 +78,6 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *o
     int ncols;
     double *c;
     double *buffer, ans;
-    double *times;
     int myid, master, numprocs;
     MPI_Status status;
     int row;
@@ -114,6 +105,8 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *o
         }
         
     } 
+    free(c);
+    free(buffer);
     MPI_Finalize();
 }
 
