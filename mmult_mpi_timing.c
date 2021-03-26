@@ -101,8 +101,6 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *o
         }
         
     } 
-    free(c);
-    free(buffer);
     MPI_Finalize();
 }
 
