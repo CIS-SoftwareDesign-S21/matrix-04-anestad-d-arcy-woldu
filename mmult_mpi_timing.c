@@ -141,7 +141,7 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
         c[anstype-1] = ans;
 
         // if test_output = 1, write output
-        fprintf(out, "%d", c[i]);
+        fprintf(out, "%f ", c[i]);
 
         // if we haven't finished the job, keep sending more rows to the slave processes, until all rows are accounted for
         if (numsent < nrows) {
