@@ -41,7 +41,7 @@ create_data.o: create_data.c
 	gcc -c create_data.c
 
 create_data:	mmult.o mmult_simd.o mmult_simd_O3.o mmult_omp.o create_data.o mat.c
-	gcc -o mmult mmult.o mmult_mpi_timing.o -fopenmp mmult_simd.o mmult_simd_O3.o mmult_omp.o create_data.o mat.c -o create_data
+	gcc -o mmult mmult.o  -fopenmp mmult_simd.o mmult_simd_O3.o mmult_omp.o create_data.o mat.c -o create_data
 
 matrix_times_vector:	matrix_times_vector.c mat.c
 	mpicc -O3 -o matrix_times_vector matrix_times_vector.c mat.c
