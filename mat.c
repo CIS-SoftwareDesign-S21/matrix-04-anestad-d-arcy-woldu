@@ -60,7 +60,7 @@ int compare_matrices(double *a, double *b, int nRows, int nCols) {
  * @return a dynamically-allocated array of doubles representing the matrix.
  */
 double *read_matrix_from_file(const char *path) {
-    FILE *fp = fopen(path, "a");
+    FILE *fp = fopen(path, "r");
     if(fp == NULL) {
         fprintf(stderr, "Unable to open file at path '%s'\n", path);
         exit(EXIT_FAILURE);

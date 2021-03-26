@@ -27,7 +27,7 @@ void loop_mmult_mpi(int argc, char* argv[]);
 
 FILE * open_output_file(const char * path) {
     FILE *cfPtr;
-    if((cfPtr = fopen(path, "w")) == NULL) {
+    if((cfPtr = fopen(path, "a")) == NULL) {
         puts("File cannot be opened");
     }
     return cfPtr;  
