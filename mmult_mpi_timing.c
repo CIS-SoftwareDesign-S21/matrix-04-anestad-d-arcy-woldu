@@ -127,9 +127,9 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
     for (int i = 0; i < min(numprocs-1, nrows); i++) {
         for (int j = 0; j < ncols; j++) {
             buffer[j] = aa[i * ncols + j];
-            MPI_Send(buffer, ncols, MPI_DOUBLE, i+1, i+1, MPI_COMM_WORLD);
-            numsent++;
         }  
+        MPI_Send(buffer, ncols, MPI_DOUBLE, i+1, i+1, MPI_COMM_WORLD);
+        numsent++;
     }
 
     // Recieve the answers computed by the slave processes and append it to matrix c
@@ -169,8 +169,8 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
 
     // each slave process id corresponds to the ith row it will be responsible for
     if (process_id <= bRows) {
-        FILE * out = open_output_file("log_mpi_inner_product.txt");
-        FILE * out2 = open_output_file("log_mpi_ans.txt");
+        // FILE * out = open_output_file("log_mpi_inner_product.txt");
+        // FILE * out2 = open_output_file("log_mpi_ans.txt");
         while(1) {
             MPI_Recv(buffer, bCols, datatype, source, tag, mpi_comm, &status);
             if (status.MPI_TAG == 0) {
@@ -180,10 +180,10 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
             ans = 0.0;
             for (int j = 0; j < bCols; j++) {
                 ans += buffer[j] * b[j];
-                fprintf(out, "PROCESS_id: %d buffer: %f b_col: %f ANS: %f\n", process_id, buffer[j], b[j], ans);
+                // fprintf(out, "PROCESS_id: %d buffer: %f b_col: %f ANS: %f\n", process_id, buffer[j], b[j], ans);
             }
             // send answer to master, along with the row #
-            fprintf(out2, "ANS: %f\n", ans);
+            // fprintf(out2, "ANS: %f\n", ans);
             MPI_Send(&ans, 1, datatype, source, row, mpi_comm);
         }
     }
