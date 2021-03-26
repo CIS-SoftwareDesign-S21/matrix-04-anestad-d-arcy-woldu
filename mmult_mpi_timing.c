@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
     int n, m;
 
     n = atoi(argv[1]);
-    m = n;
+    m = atoi(argv[2]);
     a = gen_matrix(m, n);
     b = gen_matrix(m, n);
     
