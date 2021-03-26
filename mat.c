@@ -66,7 +66,7 @@ double *read_matrix_from_file(const char *path) {
         exit(EXIT_FAILURE);
     }
 
-    size_t buflen = 255;
+    size_t buflen = 250000;
     char buf[buflen];
     int n, m;
 

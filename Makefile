@@ -2,6 +2,20 @@ PGMS=create_data mmult_omp_timing matrix_times_vector hello test_mmult mxv_omp_m
 
 all:	${PGMS}
 
+mmult_mpi: mmult_mpi.c mat.c
+	mpicc -g -Wall -O3 -o mmult_mpi mmult_mpi.c mat.c
+
+mmult_mpi_timing:	mmult_mpi_timing.c mat.c
+	mpicc -g -Wall -O3 -o mmult_mpi_timing mmult_mpi_timing.c mat.c
+
+mmult_mpi_timing.o : mmult_mpi_timing.c
+	mpicc -g -Wall -O3 mmult_mpi_timing.c
+
+
+NUMBERS = 1 2 3 4 5 10 20 50 100 200 300 400 500
+run_mpi_loop:	mmult_mpi_timing
+	$(foreach var,$(NUMBERS), mpiexec -f ~/hosts -n 12 ./mmult_mpi_timing input/a/a_$(var).txt input/b/b_$(var).txt ;)
+
 mmult_mpi_omp:		mmult.o mmult_mpi_omp.o mat.c
 	mpicc -o mmult_mpi_omp -fopenmp -O3 mmult.o mmult_mpi_omp.o mat.c
 
@@ -27,7 +41,7 @@ create_data.o: create_data.c
 	gcc -c create_data.c
 
 create_data:	mmult.o mmult_simd.o mmult_simd_O3.o mmult_omp.o create_data.o mat.c
-	gcc -o mmult mmult.o -fopenmp mmult_simd.o mmult_simd_O3.o mmult_omp.o create_data.o mat.c -o create_data
+	gcc -o mmult mmult.o  -fopenmp mmult_simd.o mmult_simd_O3.o mmult_omp.o create_data.o mat.c -o create_data
 
 matrix_times_vector:	matrix_times_vector.c mat.c
 	mpicc -O3 -o matrix_times_vector matrix_times_vector.c mat.c
@@ -37,12 +51,6 @@ hello:	hello.c
 
 mxv_omp_mpi:	mxv_omp_mpi.c mat.c
 	mpicc -fopenmp -O3 -o mxv_omp_mpi mxv_omp_mpi.c mat.c
-
-mpi_timing: mpi_timing.c mat.c
-	mpicc -g -Wall -O3 -o mmult_mpi mmult_mpi.c mat.c
-
-mmult_mpi_timing:	mmult_mpi_timing.c mat.c
-	mpicc -g -Wall -O3 -o mmult_mpi_timing mmult_mpi_timing.c mat.c
 
 test_mmult:	test_mmult.c mmult.c mat.c
 	gcc test_mmult.c mmult.c mat.c -lm -o test_mmult
