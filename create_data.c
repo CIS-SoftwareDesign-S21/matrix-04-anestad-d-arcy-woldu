@@ -96,7 +96,7 @@ void write_output(int (*fun_ptr)(double *c, double *a, int aRows, int aCols, dou
                 FILE *ptr, double *a, double *b, double *c, int n) {
 
                 (*fun_ptr)(c,a,n,n,b,n,n);
-                for (int i = 0; i < sizeof(c) / c[0]; i++) {
+                for (int i = 0; i < sizeof(c) / sizeof(c[0]); i++) {
                     fprintf(ptr, "%f ", c[i]);
                 }
                 fclose(ptr);
