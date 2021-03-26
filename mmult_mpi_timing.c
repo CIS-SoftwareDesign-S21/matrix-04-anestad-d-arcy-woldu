@@ -127,9 +127,9 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
     for (int i = 0; i < min(numprocs-1, nrows); i++) {
         for (int j = 0; j < ncols; j++) {
             buffer[j] = aa[i * ncols + j];
+            MPI_Send(buffer, ncols, MPI_DOUBLE, i+1, i+1, MPI_COMM_WORLD);
+            numsent++;
         }  
-        MPI_Send(buffer, ncols, MPI_DOUBLE, i+1, i+1, MPI_COMM_WORLD);
-        numsent++;
     }
 
     // Recieve the answers computed by the slave processes and append it to matrix c
