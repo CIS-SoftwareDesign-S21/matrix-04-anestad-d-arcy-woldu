@@ -101,8 +101,8 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) 
     if (argc > 1) {
         nrows = atoi(argv[1]);
         ncols = nrows;
-        aa = (double*)malloc(sizeof(double) * nrows * ncols);
-        b = (double*)malloc(sizeof(double) * ncols);
+        // aa = (double*)malloc(sizeof(double) * nrows * ncols);
+        // b = (double*)malloc(sizeof(double) * ncols);
         c = (double*)malloc(sizeof(double) * nrows);
         buffer = (double*)malloc(sizeof(double) * ncols);
         master = 0;
