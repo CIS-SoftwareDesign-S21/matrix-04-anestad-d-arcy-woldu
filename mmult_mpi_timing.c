@@ -1,37 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@Memhir-Yasue 
-CIS-SoftwareDesign-S21
-/
-matrix-04-anestad-d-arcy-woldu
-Private
-0
-00
-Code
-Issues
-Pull requests
-4
-Actions
-Projects
-1
-Wiki
-Security
-Insights
-Settings
-matrix-04-anestad-d-arcy-woldu/mmult_mpi_timing.c
-@Memhir-Yasue
-Memhir-Yasue made wrong change
-Latest commit aebd4ca 38 minutes ago
- History
- 1 contributor
-245 lines (205 sloc)  7.88 KB
-  
 /** 
  * 
  * Program to multiply a matrix times a vector using both
