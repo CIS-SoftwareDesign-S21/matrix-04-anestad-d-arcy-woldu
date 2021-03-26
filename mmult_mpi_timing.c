@@ -116,7 +116,6 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
                     
     double starttime, endtime;
     int anstype, numsent, sender;
-    FILE * out = open_output_file("output/outputmatrix.txt");
 
     starttime = MPI_Wtime();
     numsent = 0;
@@ -155,9 +154,7 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
             MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
         }
     } 
-    for (int i = 0; i < sizeof(c)/sizeof(c[0]); i++) {
-        fprintf(out, "%f ", c[i]);
-    }
+ 
     endtime = MPI_Wtime();
     fprintf(output_ptr, "%d", nrows);
     fprintf(output_ptr, ", %f\n", (endtime - starttime));
@@ -172,6 +169,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
 
     // each slave process id corresponds to the ith row it will be responsible for
     if (process_id <= bRows) {
+        FILE * out = open_output_file("output/outputmatrix.txt");
         while(1) {
             MPI_Recv(buffer, bCols, datatype, source, tag, mpi_comm, &status);
             if (status.MPI_TAG == 0) {
@@ -182,6 +180,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
             for (int j = 0; j < bCols; j++) {
                 ans += buffer[j] * b[j];
             }
+            fprintf(out, "%f ", ans);
             // send answer to master, along with the row #
             MPI_Send(&ans, 1, datatype, source, row, mpi_comm);
         }
