@@ -25,13 +25,9 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *o
 
 void loop_mmult_mpi(int argc, char* argv[]);
 
-
-FILE * open_file(const char * path, const char * mode) {
-    /*
-        This code 
-    */
+FILE * open_output_file(const char * path) {
     FILE *cfPtr;
-    if((cfPtr = fopen(path, mode)) == NULL) {
+    if((cfPtr = fopen(path, "a")) == NULL) {
         puts("File cannot be opened");
     }
     return cfPtr;  
@@ -44,11 +40,25 @@ int main(int argc, char **argv) {
     FILE *output_ptr;
     int n, m;
 
+    // n = atoi(argv[1]);
+    // m = atoi(argv[1]);
+    // a = gen_matrix(m, n);
+    // b = gen_matrix(m, n);
+    
+    // output_ptr = open_output_file("output/mpi_output.txt");
+    // delta_t = mmult_mpi(argc, argv, a, b);
+
+    // fprintf(output_ptr, "%d", n);
+    // fprintf(output_ptr, ", %f\n", delta_t);
+    // fclose(output_ptr);
+
     if(argc == 2) {
         // business as usual, gen a random square matrices of size argv[1]
-        output_ptr = open_file("mpi_sample_log.txt", 'a');
+
+        output_ptr = open_output_file("output/mpi_output.txt");
+
         n = atoi(argv[1]);
-        m = n;
+        m = atoi(argv[1]);
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
@@ -56,14 +66,14 @@ int main(int argc, char **argv) {
 
     }
     else if(argc == 3) {
-        // matrices a and b are provided for
-        output_ptr = open_file("mpi_multirun_log.txt", 'a');
-
+        // matrices a and b provided
+        output_ptr = open_output_file("output/mpi_output.txt");
+        
         n = get_matrix_size_from_file(argv[1]);
         a = read_matrix_from_file(argv[1]);
         b = read_matrix_from_file(argv[2]);
-        mmult_mpi(argc, argv, a, b, n, output_ptr);
-        sleep(2);
+        mmult_mpi(argc, argv, a, b, n,output_ptr);
+        sleep(1);
     }
     return 0;
 }
@@ -90,7 +100,8 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *o
 
     if (argc > 1) {
         ncols = nrows;
-
+        // aa = (double*)malloc(sizeof(double) * nrows * ncols);
+        // b = (double*)malloc(sizeof(double) * ncols);
         c = (double*)malloc(sizeof(double) * nrows);
         buffer = (double*)malloc(sizeof(double) * ncols);
         master = 0;
@@ -99,13 +110,11 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *o
             master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status, output_ptr);
         } else {
             MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
-            // Slave process receives matrix b sent from master and computes inner product
             compute_inner_product(buffer, ncols, MPI_DOUBLE, master, 
                                     MPI_ANY_TAG, MPI_COMM_WORLD, status,
                                     myid, nrows, b, row, ans);
         }
-    free(c);
-    free(buffer);
+    
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
     }
@@ -119,11 +128,11 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
     double starttime, endtime;
     int anstype, numsent, sender;
 
+    // Master Code goes here
+    // aa = gen_matrix(nrows, ncols);
     starttime = MPI_Wtime();
     numsent = 0;
     MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
-
-    // iterate through matrix b and send its columns to each slave process
     for (int i = 0; i < min(numprocs-1, nrows); i++) {
         for (int j = 0; j < ncols; j++) {
             buffer[j] = aa[i * ncols + j];
@@ -132,13 +141,10 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
         numsent++;
     }
     for (int i = 0; i < nrows; i++) {
-        // Recieve the answers computed by the slave processes and append it to matrix c
         MPI_Recv(&ans, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         sender = status.MPI_SOURCE;
         anstype = status.MPI_TAG;
         c[anstype-1] = ans;
-
-        // if we haven't finished the job, keep sending more rows to the slave processes, until all rows of matrix aa are computed for
         if (numsent < nrows) {
             for (int j = 0; j < ncols; j++) {
                 buffer[j] = aa[numsent*ncols + j];
@@ -146,7 +152,6 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
             MPI_Send(buffer, ncols, MPI_DOUBLE, sender, numsent+1, MPI_COMM_WORLD);
             numsent++;
         } else {
-            // we're finished, job done!
             MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
         }
     } 
