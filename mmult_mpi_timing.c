@@ -56,8 +56,9 @@ int main(int argc, char **argv) {
         // business as usual, gen a random square matrices of size argv[1]
 
         output_ptr = open_output_file("output/mpi_output.txt");
+        
         n = atoi(argv[1]);
-        m = n;
+        m = atoi(argv[1]);
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
