@@ -21,7 +21,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
                   MPI_Status status, FILE *output_ptr);
 
-void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr);
+void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr);
 
 void loop_mmult_mpi(int argc, char* argv[]);
 
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
-        mmult_mpi(argc, argv, a, b, output_ptr);
+        mmult_mpi(argc, argv, a, b, n,output_ptr);
 
     }
     else if(argc == 3) {
@@ -72,14 +72,14 @@ int main(int argc, char **argv) {
         n = get_matrix_size_from_file(argv[1]);
         a = read_matrix_from_file(argv[1]);
         b = read_matrix_from_file(argv[2]);
-        mmult_mpi(argc, argv, a, b, output_ptr);
+        mmult_mpi(argc, argv, a, b, n,output_ptr);
         sleep(1);
     }
     return 0;
 }
 
 
-void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) {
+void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr) {
     int nrows, ncols;
     double *c;
     double *buffer, ans;
