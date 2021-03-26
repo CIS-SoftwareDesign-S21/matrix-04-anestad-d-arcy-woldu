@@ -19,9 +19,9 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
              int ans); 
 
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
-                  MPI_Status status, FILE *output_ptr, int test_output);
+                  MPI_Status status, FILE *output_ptr);
 
-void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr);
+void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr, int test_output);
 
 void loop_mmult_mpi(int argc, char* argv[]);
 
@@ -116,7 +116,7 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
                     
     double starttime, endtime;
     int anstype, numsent, sender;
-    FILE * out = open_output_file("output/outputmatrix.txt")
+    FILE * out = open_output_file("output/outputmatrix.txt");
 
     starttime = MPI_Wtime();
     numsent = 0;
