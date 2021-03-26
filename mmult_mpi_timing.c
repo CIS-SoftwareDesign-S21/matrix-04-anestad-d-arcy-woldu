@@ -21,7 +21,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
                   MPI_Status status, FILE *output_ptr);
 
-void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr, int test_output);
+void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr);
 
 void loop_mmult_mpi(int argc, char* argv[]);
 
@@ -34,7 +34,6 @@ FILE * open_output_file(const char * path) {
 }
 
 int main(int argc, char **argv) {   
-    int test_output;
     double *a, *b;
     FILE *output_ptr;
     int n, m;
@@ -64,16 +63,9 @@ int main(int argc, char **argv) {
         mmult_mpi(argc, argv, a, b, n, output_ptr, test_output);
         sleep(1);
     }
-    else if(argc == 4) {
-        // run tests
-
-        test_output = 1;
-        output_ptr = open_output_file("output/mpi_output.txt");
-    }
-    return 0;
 }
 
-void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr, int test_output) {
+void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr) {
     int ncols;
     double *c;
     double *buffer, ans;
