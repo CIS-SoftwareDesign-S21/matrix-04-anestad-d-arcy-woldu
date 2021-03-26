@@ -90,7 +90,7 @@ void mmult_mpi(int argc, char* argv[]) {
     MPI_Status status;
     int i, j, numsent, sender;
     int anstype, row;
-    FILE *output_ptr
+    FILE *output_ptr = open_output_file("output/mpi_output.txt");
 
     srand(time(0));
     MPI_Init(&argc, &argv);
@@ -117,7 +117,6 @@ void mmult_mpi(int argc, char* argv[]) {
         }
     
     } else if (argc == 3) {
-        output_ptr = open_output_file("output/mpi_output.txt");
         nrows = get_matrix_size_from_file(argv[1]);
         ncols = nrows;
         // aa = (double*)malloc(sizeof(double) * nrows * ncols);
