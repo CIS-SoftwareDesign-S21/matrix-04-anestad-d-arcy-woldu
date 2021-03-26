@@ -19,7 +19,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
              int ans); 
 
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
-                  MPI_Status status, FILE *output_ptr);
+                  MPI_Status status, FILE *output_ptr, int test_output);
 
 void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr);
 
@@ -34,7 +34,7 @@ FILE * open_output_file(const char * path) {
 }
 
 int main(int argc, char **argv) {   
-
+    int test_output;
     double *a, *b;
     FILE *output_ptr;
     int n, m;
@@ -43,30 +43,37 @@ int main(int argc, char **argv) {
         // business as usual, gen a random square matrices of size argv[1]
 
         output_ptr = open_output_file("output/mpi_output.txt");
+        test_output = 0;
 
         n = atoi(argv[1]);
         m = atoi(argv[1]);
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
-        mmult_mpi(argc, argv, a, b, n, output_ptr);
+        mmult_mpi(argc, argv, a, b, n, output_ptr, test_output);
 
     }
     else if(argc == 3) {
         // matrices a and b provided
         output_ptr = open_output_file("output/mpi_output.txt");
-        
+        test_output = 0;
+
         n = get_matrix_size_from_file(argv[1]);
         a = read_matrix_from_file(argv[1]);
         b = read_matrix_from_file(argv[2]);
-        mmult_mpi(argc, argv, a, b, n, output_ptr);
+        mmult_mpi(argc, argv, a, b, n, output_ptr, test_output);
         sleep(1);
+    }
+    else if(argc == 4) {
+        // run tests
+
+        test_output = 1;
+        output_ptr = open_output_file("output/mpi_output.txt");
     }
     return 0;
 }
 
-
-void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr) {
+void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr, int test_output) {
     int ncols;
     double *c;
     double *buffer, ans;
@@ -109,6 +116,7 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
                     
     double starttime, endtime;
     int anstype, numsent, sender;
+    FILE * out = open_output_file("output/outputmatrix.txt")
 
     starttime = MPI_Wtime();
     numsent = 0;
@@ -131,6 +139,9 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
         sender = status.MPI_SOURCE;
         anstype = status.MPI_TAG;
         c[anstype-1] = ans;
+
+        // if test_output = 1, write output
+        fprintf(out, "%d", c[i]);
 
         // if we haven't finished the job, keep sending more rows to the slave processes, until all rows are accounted for
         if (numsent < nrows) {
