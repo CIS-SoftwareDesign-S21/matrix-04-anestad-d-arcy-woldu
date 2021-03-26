@@ -39,10 +39,6 @@ int main(int argc, char **argv) {
     FILE *output_ptr;
     int n, m;
 
-    fprintf(output_ptr, "%d", n);
-    fprintf(output_ptr, ", %f\n", delta_t);
-    fclose(output_ptr);
-
     if (argc == 0) {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
         return 0;
