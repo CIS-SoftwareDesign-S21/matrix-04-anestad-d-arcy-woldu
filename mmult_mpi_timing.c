@@ -160,7 +160,7 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) 
         nrows = atoi(argv[1]);
         ncols = nrows;
         // aa = (double*)malloc(sizeof(double) * nrows * ncols);
-        b = (double*)malloc(sizeof(double) * ncols);
+        // b = (double*)malloc(sizeof(double) * ncols);
         c = (double*)malloc(sizeof(double) * nrows);
         buffer = (double*)malloc(sizeof(double) * ncols);
         master = 0;
@@ -177,7 +177,6 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) 
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
     }
-
     MPI_Finalize();
 }
 
