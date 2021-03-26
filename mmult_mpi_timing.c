@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 
 
 void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr) {
-    int nrows, ncols;
+    int ncols;
     double *c;
     double *buffer, ans;
     double *times;
