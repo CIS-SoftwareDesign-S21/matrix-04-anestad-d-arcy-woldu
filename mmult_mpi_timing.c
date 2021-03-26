@@ -99,7 +99,6 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *o
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
     if (argc > 1) {
-        nrows = atoi(argv[1]);
         ncols = nrows;
         // aa = (double*)malloc(sizeof(double) * nrows * ncols);
         // b = (double*)malloc(sizeof(double) * ncols);
