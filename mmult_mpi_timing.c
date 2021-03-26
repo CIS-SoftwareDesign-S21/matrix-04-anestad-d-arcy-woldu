@@ -141,7 +141,7 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
         c[anstype-1] = ans;
 
         // if test_output = 1, write output
-        fprintf(out, "%d ", c[anstype-1]);
+        
 
         // if we haven't finished the job, keep sending more rows to the slave processes, until all rows are accounted for
         if (numsent < nrows) {
@@ -155,6 +155,9 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
             MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
         }
     } 
+    for (int i = 0; i < sizeof(c)/sizeof(c[0]); i++) {
+        fprintf(out, "%d ", c[i]);
+    }
     endtime = MPI_Wtime();
     fprintf(output_ptr, "%d", nrows);
     fprintf(output_ptr, ", %f\n", (endtime - starttime));
