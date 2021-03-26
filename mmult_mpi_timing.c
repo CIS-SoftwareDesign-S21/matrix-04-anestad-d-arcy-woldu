@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
         a = read_matrix_from_file(argv[1]);
         b = read_matrix_from_file(argv[2]);
         mmult_mpi(argc, argv, a, b, output_ptr);
-
+        sleep(1);
     }
     else if(argc == 2) {
         // business as usual, gen a random square matrices of size argv[1]
@@ -73,12 +73,6 @@ int main(int argc, char **argv) {
         b = gen_matrix(m, n);
         mmult_mpi(argc, argv, a, b, output_ptr);
 
-    }
-    else {
-        // no matrices provided (pass a default value)
-        // run through the matrices stored in the input dir
-
-        loop_mmult_mpi(argc, argv);
     }
     return 0;
 }
@@ -115,9 +109,6 @@ void loop_mmult_mpi(int argc, char* argv[]) {
         double * aa = read_matrix_from_file(buffer_a);
         double * b = read_matrix_from_file(buffer_b);
         
-
-
-
         if (argc > 0) {
             nrows = atoi(argv[1]);
             ncols = nrows;
