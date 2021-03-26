@@ -35,22 +35,9 @@ FILE * open_output_file(const char * path) {
 
 int main(int argc, char **argv) {   
 
-    double delta_t;
     double *a, *b;
     FILE *output_ptr;
     int n, m;
-
-    // n = atoi(argv[1]);
-    // m = atoi(argv[1]);
-    // a = gen_matrix(m, n);
-    // b = gen_matrix(m, n);
-    
-    // output_ptr = open_output_file("output/mpi_output.txt");
-    // delta_t = mmult_mpi(argc, argv, a, b);
-
-    // fprintf(output_ptr, "%d", n);
-    // fprintf(output_ptr, ", %f\n", delta_t);
-    // fclose(output_ptr);
 
     if(argc == 2) {
         // business as usual, gen a random square matrices of size argv[1]
@@ -62,7 +49,7 @@ int main(int argc, char **argv) {
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
-        mmult_mpi(argc, argv, a, b, n,output_ptr);
+        mmult_mpi(argc, argv, a, b, n, output_ptr);
 
     }
     else if(argc == 3) {
@@ -72,7 +59,7 @@ int main(int argc, char **argv) {
         n = get_matrix_size_from_file(argv[1]);
         a = read_matrix_from_file(argv[1]);
         b = read_matrix_from_file(argv[2]);
-        mmult_mpi(argc, argv, a, b, n,output_ptr);
+        mmult_mpi(argc, argv, a, b, n, output_ptr);
         sleep(1);
     }
     return 0;
@@ -83,15 +70,9 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *o
     int ncols;
     double *c;
     double *buffer, ans;
-    double *times;
-    double total_times;
-    int run_index;
-    int nruns;
     int myid, master, numprocs;
-    double starttime, endtime;
     MPI_Status status;
-    int i, j, numsent, sender;
-    int anstype, row;
+    int row;
 
     srand(time(0));
     MPI_Init(&argc, &argv);
