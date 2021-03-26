@@ -14,7 +14,7 @@ mmult_mpi_timing.o : mmult_mpi_timing.c
 
 NUMBERS = 1 2 3 4 5 10 20 50 100 200 300 400 500
 run_mpi_loop:	mmult_mpi_timing
-	$(foreach var,$(NUMBERS),./mmult_mpi_timing input/a/a_$(var).txt input/b/b_$(var).txt ;)
+	$(foreach var,$(NUMBERS), mpiexec -f ~/hosts -n 12 ./mmult_mpi_timing input/a/a_$(var).txt input/b/b_$(var).txt ;)
 
 mmult_mpi_omp:		mmult.o mmult_mpi_omp.o mat.c
 	mpicc -o mmult_mpi_omp -fopenmp -O3 mmult.o mmult_mpi_omp.o mat.c
