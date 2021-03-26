@@ -9,7 +9,7 @@ double calcTime(int (*fun_ptr)(double *c, double *a, int aRows, int aCols, doubl
 void print_matrix_to_file(FILE *ptr, double *a, double *b, int n);
 void write_test_output(double *a, double *b, int n);
 void write_output(int (*fun_ptr)(double *c, double *a, int aRows, int aCols, double *b, int bRows, int bCols), 
-                FILE *ptr, double *a, double *b, double *c, int n);
+                FILE *ptr, double *a, double *b, double **c, int n);
 
 FILE * open_output_file(const char * path);
 
@@ -93,10 +93,11 @@ void write_test_output(double *a, double *b, int n) {
 }
 
 void write_output(int (*fun_ptr)(double *c, double *a, int aRows, int aCols, double *b, int bRows, int bCols), 
-                FILE *ptr, double *a, double *b, double *c, int n) {
+                FILE *ptr, double *a, double *b, double **c, int n) {
 
                 (*fun_ptr)(c,a,n,n,b,n,n);
                 for (int i = 0; i < sizeof(c) / sizeof(c[0]); i++) {
+                      if (*c == NULL) {return;}
                     fprintf(ptr, "%f ", c[i]);
                 }
                 fclose(ptr);
