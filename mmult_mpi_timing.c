@@ -156,7 +156,7 @@ void master_code(double *aa, double *b, double *c, double *buffer, double ans, i
         }
     } 
     for (int i = 0; i < sizeof(c)/sizeof(c[0]); i++) {
-        fprintf(out, "%d ", c[i]);
+        fprintf(out, "%f ", c[i]);
     }
     endtime = MPI_Wtime();
     fprintf(output_ptr, "%d", nrows);
