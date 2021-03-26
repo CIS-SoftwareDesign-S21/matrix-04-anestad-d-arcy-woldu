@@ -21,7 +21,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
                   MPI_Status status, FILE *output_ptr);
 
-void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr);
+void mmult_mpi(int argc, char* argv[]);
 
 void loop_mmult_mpi(int argc, char* argv[]);
 
