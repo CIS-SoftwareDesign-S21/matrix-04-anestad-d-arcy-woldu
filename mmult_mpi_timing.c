@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
         // business as usual, gen a random square matrices of size argv[1]
 
         output_ptr = open_output_file("output/mpi_output.txt");
-        
+
         n = atoi(argv[1]);
         m = atoi(argv[1]);
 
@@ -101,7 +101,7 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) 
     if (argc > 1) {
         nrows = atoi(argv[1]);
         ncols = nrows;
-        // aa = (double*)malloc(sizeof(double) * nrows * ncols);
+        aa = (double*)malloc(sizeof(double) * nrows * ncols);
         b = (double*)malloc(sizeof(double) * ncols);
         c = (double*)malloc(sizeof(double) * nrows);
         buffer = (double*)malloc(sizeof(double) * ncols);
@@ -115,7 +115,7 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) 
                                     MPI_ANY_TAG, MPI_COMM_WORLD, status,
                                     myid, nrows, b, row, ans);
         }
-        
+    
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
     }
