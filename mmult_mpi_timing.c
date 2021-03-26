@@ -1,3 +1,37 @@
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@Memhir-Yasue 
+CIS-SoftwareDesign-S21
+/
+matrix-04-anestad-d-arcy-woldu
+Private
+0
+00
+Code
+Issues
+Pull requests
+4
+Actions
+Projects
+1
+Wiki
+Security
+Insights
+Settings
+matrix-04-anestad-d-arcy-woldu/mmult_mpi_timing.c
+@Memhir-Yasue
+Memhir-Yasue made wrong change
+Latest commit aebd4ca 38 minutes ago
+ History
+ 1 contributor
+245 lines (205 sloc)  7.88 KB
+  
 /** 
  * 
  * Program to multiply a matrix times a vector using both
@@ -21,7 +55,7 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
 void master_code(double *aa, double *b, double *c, double *buffer, double ans, int nrows, int ncols, int master, int numprocs,
                   MPI_Status status, FILE *output_ptr);
 
-void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr);
+void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr);
 
 void loop_mmult_mpi(int argc, char* argv[]);
 
@@ -35,25 +69,24 @@ FILE * open_output_file(const char * path) {
 
 int main(int argc, char **argv) {   
 
+    double delta_t;
     double *a, *b;
     FILE *output_ptr;
     int n, m;
 
-    if (argc == 0) {
-        fprintf(stderr, "Usage matrix_times_vector <size>\n");
-        return 0;
-    }
-    else if(argc == 3) {
-        // matrices a and b provided
-        output_ptr = open_output_file("output/mpi_output.txt");
-        
-        n = get_matrix_size_from_file(argv[1]);
-        a = read_matrix_from_file(argv[1]);
-        b = read_matrix_from_file(argv[2]);
-        mmult_mpi(argc, argv, a, b, n, output_ptr);
-        sleep(1);
-    }
-    else if(argc == 2) {
+    // n = atoi(argv[1]);
+    // m = atoi(argv[1]);
+    // a = gen_matrix(m, n);
+    // b = gen_matrix(m, n);
+    
+    // output_ptr = open_output_file("output/mpi_output.txt");
+    // delta_t = mmult_mpi(argc, argv, a, b);
+
+    // fprintf(output_ptr, "%d", n);
+    // fprintf(output_ptr, ", %f\n", delta_t);
+    // fclose(output_ptr);
+
+    if(argc == 2) {
         // business as usual, gen a random square matrices of size argv[1]
 
         output_ptr = open_output_file("output/mpi_output.txt");
@@ -62,31 +95,47 @@ int main(int argc, char **argv) {
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
-        mmult_mpi(argc, argv, a, b, n, output_ptr);
+        mmult_mpi(argc, argv, a, b, output_ptr);
 
+    }
+    else if(argc == 3) {
+        // matrices a and b provided
+        output_ptr = open_output_file("output/mpi_output.txt");
+        
+        n = get_matrix_size_from_file(argv[1]);
+        a = read_matrix_from_file(argv[1]);
+        b = read_matrix_from_file(argv[2]);
+        mmult_mpi(argc, argv, a, b, output_ptr);
+        sleep(1);
     }
     return 0;
 }
 
 
-void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr) {
-
-    int ncols;
+void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) {
+    int nrows, ncols;
     double *c;
     double *buffer, ans;
+    double *times;
+    double total_times;
+    int run_index;
+    int nruns;
     int myid, master, numprocs;
+    double starttime, endtime;
     MPI_Status status;
-    int row;
+    int i, j, numsent, sender;
+    int anstype, row;
 
     srand(time(0));
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
-    if (argc > 0) {
+    if (argc > 1) {
+        nrows = atoi(argv[1]);
         ncols = nrows;
         // aa = (double*)malloc(sizeof(double) * nrows * ncols);
-        // b = (double*)malloc(sizeof(double) * ncols);
+        b = (double*)malloc(sizeof(double) * ncols);
         c = (double*)malloc(sizeof(double) * nrows);
         buffer = (double*)malloc(sizeof(double) * ncols);
         master = 0;
@@ -100,7 +149,9 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *o
                                     myid, nrows, b, row, ans);
         }
         
-    } 
+    } else {
+        fprintf(stderr, "Usage matrix_times_vector <size>\n");
+    }
     MPI_Finalize();
 }
 
@@ -167,3 +218,15 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
         }
     }
 }
+© 2021 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
