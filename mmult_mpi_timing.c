@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     if(argc == 2) {
         // business as usual, gen a random square matrices of size argv[1]
 
-        output_ptr = open_output_file("output/mpi_output.txt");
+        output_ptr = open_output_file("output/singe_mpi_run.txt");
         test_output = 0;
 
         n = atoi(argv[1]);
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
     }
     else if(argc == 3) {
         // matrices a and b provided
-        output_ptr = open_output_file("output/mpi_output.txt");
+        output_ptr = open_output_file("output/mpi_data.txt");
         test_output = 0;
 
         n = get_matrix_size_from_file(argv[1]);
