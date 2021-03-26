@@ -35,31 +35,34 @@ FILE * open_output_file(const char * path) {
 
 int main(int argc, char **argv) {   
 
-    double delta_t;
     double *a, *b;
     FILE *output_ptr;
     int n, m;
 
-    // n = atoi(argv[1]);
-    // m = atoi(argv[1]);
-    // a = gen_matrix(m, n);
-    // b = gen_matrix(m, n);
+    n = atoi(argv[1]);
+    m = atoi(argv[1]);
+    a = gen_matrix(m, n);
+    b = gen_matrix(m, n);
     
-    // output_ptr = open_output_file("output/mpi_output.txt");
-    // delta_t = mmult_mpi(argc, argv, a, b);
+    output_ptr = open_output_file("output/mpii_output.txt");
+    mmult_mpi(argc, argv, a, b);
 
-    // fprintf(output_ptr, "%d", n);
-    // fprintf(output_ptr, ", %f\n", delta_t);
-    // fclose(output_ptr);
+    fprintf(output_ptr, "%d", n);
+    fprintf(output_ptr, ", %f\n", delta_t);
+    fclose(output_ptr);
 
-    if(argc == 3) {
+    if (argc == 0) {
+        fprintf(stderr, "Usage matrix_times_vector <size>\n");
+        return 0;
+    }
+    else if(argc == 3) {
         // matrices a and b provided
         output_ptr = open_output_file("output/mpi_output.txt");
         
         n = get_matrix_size_from_file(argv[1]);
         a = read_matrix_from_file(argv[1]);
         b = read_matrix_from_file(argv[2]);
-        mmult_mpi(argc, argv, a, b, output_ptr);
+        mmult_mpi(argc, argv, a, b, n, output_ptr);
         sleep(1);
     }
     else if(argc == 2) {
@@ -71,85 +74,22 @@ int main(int argc, char **argv) {
 
         a = gen_matrix(m, n);
         b = gen_matrix(m, n);
-        mmult_mpi(argc, argv, a, b, output_ptr);
+        mmult_mpi(argc, argv, a, b, n, output_ptr);
 
     }
     return 0;
 }
 
-void loop_mmult_mpi(int argc, char* argv[]) {
-    int nrows, ncols;
-    double *b, *c;
-    double *buffer, ans;
-    double *times;
-    double total_times;
-    int run_index;
-    int nruns;
-    int myid, master, numprocs;
-    double starttime, endtime;
-    MPI_Status status;
-    int i, j, numsent, sender;
-    int anstype, row;
-    
 
-    srand(time(0));
-    MPI_Init(&argc, &argv);
-    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
-    MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+void mmult_mpi(int argc, char* argv[], double *aa, double *b, int nrows, FILE *output_ptr) {
 
-    int N[] = {1,2,3,4,5,10,20,50,100,200,300,400,500};
-        for(int i = 0; i < 13; i++) {
-        FILE * output_ptr = open_output_file("output/mpi_output.txt");
-
-        char buffer_a[2001]; // The filename buffer.
-        char buffer_b[2001]; // The filename buffer.
-        sprintf (buffer_a, "input/a/a_%d.txt", N[i]);
-        sprintf (buffer_b, "input/b/b_%d.txt", N[i]);
-
-        double * aa = read_matrix_from_file(buffer_a);
-        double * b = read_matrix_from_file(buffer_b);
-        
-        if (argc > 0) {
-            nrows = atoi(argv[1]);
-            ncols = nrows;
-            // aa = (double*)malloc(sizeof(double) * nrows * ncols);
-            // b = (double*)malloc(sizeof(double) * ncols);
-            c = (double*)malloc(sizeof(double) * nrows);
-            buffer = (double*)malloc(sizeof(double) * ncols);
-            master = 0;
-
-            if (myid == master) {
-
-                master_code(aa, b, c, buffer, ans, nrows, ncols, master, numprocs, status, output_ptr);
-                
-                
-            } else {
-                MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
-                compute_inner_product(buffer, ncols, MPI_DOUBLE, master, 
-                                        MPI_ANY_TAG, MPI_COMM_WORLD, status,
-                                        myid, nrows, b, row, ans);
-            }
-            
-        } else {
-            fprintf(stderr, "Usage matrix_times_vector <size>\n");
-        }
-    }
-    MPI_Finalize();
-}
-
-void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) {
-    int nrows, ncols;
+    int ncols;
     double *c;
     double *buffer, ans;
     double *times;
-    double total_times;
-    int run_index;
-    int nruns;
     int myid, master, numprocs;
-    double starttime, endtime;
     MPI_Status status;
-    int i, j, numsent, sender;
-    int anstype, row;
+    int row;
 
     srand(time(0));
     MPI_Init(&argc, &argv);
@@ -157,7 +97,6 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) 
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
     if (argc > 0) {
-        nrows = atoi(argv[1]);
         ncols = nrows;
         // aa = (double*)malloc(sizeof(double) * nrows * ncols);
         // b = (double*)malloc(sizeof(double) * ncols);
@@ -174,9 +113,7 @@ void mmult_mpi(int argc, char* argv[], double *aa, double *b, FILE *output_ptr) 
                                     myid, nrows, b, row, ans);
         }
         
-    } else {
-        fprintf(stderr, "Usage matrix_times_vector <size>\n");
-    }
+    } 
     MPI_Finalize();
 }
 
