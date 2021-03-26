@@ -184,15 +184,3 @@ void compute_inner_product(double *buffer, int bCols, MPI_Datatype datatype, int
         }
     }
 }
-© 2021 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
